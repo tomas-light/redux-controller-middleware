@@ -13,3 +13,4 @@ export {
 export * from './Reducer';
 export * from './decorators';
 export * from './symbols';
+export * from './hooks';

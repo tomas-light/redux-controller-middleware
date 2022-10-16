@@ -1,12 +1,14 @@
-import { Action, CallbackAction } from './types';
+import { Container, IHaveDependencies } from "../../cheap-di";
+import { Action, ActionMaybeWithContainer, CallbackAction } from './types';
 
-export class AppAction<TPayload = any> implements Action<TPayload> {
+export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayload> {
   type: any;
   payload: TPayload;
 
   callbackAction?: CallbackAction;
   actions?: AppAction[];
   stopPropagation?: boolean;
+  container?: Container & IHaveDependencies;
 
   constructor(type: string, payload?: TPayload) {
     this.type = type;

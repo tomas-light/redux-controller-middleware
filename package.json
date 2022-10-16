@@ -30,15 +30,23 @@
     "@typescript-eslint/eslint-plugin": "5.21.0",
     "@typescript-eslint/parser": "5.21.0",
     "cheap-di": "3.4.0",
+    "cheap-di-react": "4.0.0",
     "eslint": "8.17.0",
     "eslint-plugin-sonarjs": "0.13.0",
     "jest": "28.1.1",
     "prettier": "2.7.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-redux": "8.0.4",
+    "redux": "4.2.0",
     "ts-jest": "28.0.5",
     "typescript": "4.6.4"
   },
   "peerDependencies": {
     "cheap-di": ">= 3.4.0",
+    "cheap-di-react": ">= 4.0.0",
+    "react": ">= 17.0.2",
+    "react-dom": ">= 17.0.2",
     "react-redux": ">= 8.0.4",
     "redux": ">= 4.2.0"
   },
@@ -46,5 +54,9 @@
     "type": "git",
     "url": "https://github.com/TomasLight/react-redux-controller"
   },
-  "packageManager": "yarn@3.2.0"
+  "packageManager": "yarn@3.2.0",
+  "resolutions": {
+    "cheap-di": "portal:/D:/dev/github/cheap-di",
+    "cheap-di-react": "portal:/D:/dev/github/cheap-di-react"
+  }
 }
