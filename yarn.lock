@@ -1016,6 +1016,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tomas_light/react-redux-controller@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@tomas_light/react-redux-controller@workspace:."
+  dependencies:
+    "@types/jest": 28.1.1
+    "@typescript-eslint/eslint-plugin": 5.21.0
+    "@typescript-eslint/parser": 5.21.0
+    cheap-di: 3.4.0
+    cheap-di-react: 4.0.0
+    eslint: 8.17.0
+    eslint-plugin-sonarjs: 0.13.0
+    jest: 28.1.1
+    prettier: 2.7.1
+    react: 17.0.2
+    react-dom: 17.0.2
+    react-redux: 8.0.4
+    redux: 4.2.0
+    reflect-metadata: 0.1.13
+    ts-jest: 28.0.5
+    typescript: 4.6.4
+  peerDependencies:
+    cheap-di: ">= 3.4.0"
+    cheap-di-react: ">= 4.0.0"
+    react: ">= 17.0.2"
+    react-dom: ">= 17.0.2"
+    react-redux: ">= 8.0.4"
+    redux: ">= 4.2.0"
+  languageName: unknown
+  linkType: soft
+
 "@tootallnate/once@npm:2":
   version: 2.0.0
   resolution: "@tootallnate/once@npm:2.0.0"
@@ -1718,23 +1748,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cheap-di-react@portal:/D:/dev/github/cheap-di-react::locator=react-redux-controller%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "cheap-di-react@portal:/D:/dev/github/cheap-di-react::locator=react-redux-controller%40workspace%3A."
+"cheap-di-react@npm:4.0.0":
+  version: 4.0.0
+  resolution: "cheap-di-react@npm:4.0.0"
   peerDependencies:
     cheap-di: ">= 3.4.0"
     react: ">= 17.0.2"
     react-dom: ">= 17.0.2"
+  checksum: d7e237ee09a32663d5cec5e44a49ce396504af291d2a024c6be4523084537c05d36faea4d5e7d20ee99984f2a7d51b605510b3739b1f5f69fe9532cf4a5f339a
   languageName: node
-  linkType: soft
+  linkType: hard
 
-"cheap-di@portal:/D:/dev/github/cheap-di::locator=react-redux-controller%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "cheap-di@portal:/D:/dev/github/cheap-di::locator=react-redux-controller%40workspace%3A."
+"cheap-di@npm:3.4.0":
+  version: 3.4.0
+  resolution: "cheap-di@npm:3.4.0"
   dependencies:
     reflect-metadata: 0.1.13
+  checksum: 7a855607bbf0a51b5ec971a91568fd334d5a33a9d4a0c71e347abe6083e9c77688060d912827d87f09fce4c5a0b4da58c230b4d6c55721520a9af180d474cfaa
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "chownr@npm:^2.0.0":
   version: 2.0.0
@@ -4032,36 +4064,6 @@ __metadata:
   checksum: d206a0fe6790851bff168727bfb896de02c5591695afb0c441163e8630136a3e13ee1a7ddd59fdccddcc93968b4721ae112c10f790b194b03b35a3dc13a355ef
   languageName: node
   linkType: hard
-
-"react-redux-controller@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "react-redux-controller@workspace:."
-  dependencies:
-    "@types/jest": 28.1.1
-    "@typescript-eslint/eslint-plugin": 5.21.0
-    "@typescript-eslint/parser": 5.21.0
-    cheap-di: 3.4.0
-    cheap-di-react: 4.0.0
-    eslint: 8.17.0
-    eslint-plugin-sonarjs: 0.13.0
-    jest: 28.1.1
-    prettier: 2.7.1
-    react: 17.0.2
-    react-dom: 17.0.2
-    react-redux: 8.0.4
-    redux: 4.2.0
-    reflect-metadata: 0.1.13
-    ts-jest: 28.0.5
-    typescript: 4.6.4
-  peerDependencies:
-    cheap-di: ">= 3.4.0"
-    cheap-di-react: ">= 4.0.0"
-    react: ">= 17.0.2"
-    react-dom: ">= 17.0.2"
-    react-redux: ">= 8.0.4"
-    redux: ">= 4.2.0"
-  languageName: unknown
-  linkType: soft
 
 "react-redux@npm:8.0.4":
   version: 8.0.4

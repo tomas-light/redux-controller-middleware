@@ -7,7 +7,7 @@
 ### <a name="install"></a> Installation
 
 ```bash
-npm install react-redux-controller
+npm install @tomas_light/react-redux-controller
 ```
 
 ### <a name="usage"></a> How to use controllers
@@ -19,7 +19,7 @@ It allows you to use dependency injection technics and simplify tests in some ca
 Create your store
 ```ts
 // User.store.ts
-import { Reducer } from 'react-redux-controller';
+import { Reducer } from '@tomas_light/react-redux-controller';
 
 class UserStore {
   users: string[] = [];
@@ -30,14 +30,14 @@ class UserStore {
 }
 ```
 
-Register store reducer and add react-redux-controller middleware to redux. 
+Register store reducer and add @tomas_light/react-redux-controller middleware to redux. 
 You can also register DI container, that allows you to inject services in controllers.
 ```ts
 // configRedux.ts
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
 
-import { controllerMiddleware } from "react-redux-controller";
+import { controllerMiddleware } from "@tomas_light/react-redux-controller";
 import { container } from "cheap-di";
 
 import { UserStore } from "./User.store";
@@ -75,7 +75,7 @@ export type State = ReturnType<ReturnType<typeof configureRedux>["getState"]>;
 Create a controller to encapsulate a piece of application business logic.
 ```ts
 // User.controller.ts
-import { ControllerBase, watch } from 'react-redux-controller';
+import { ControllerBase, watch } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
 import { UsersActions } from "./Users.actions";
 import { UsersStore } from "./Users.store";
@@ -147,7 +147,7 @@ You can use custom action name, like `@watch('myCustomActionName')`.
 But in this case you should change define this method with `DecoratedWatchedController`
 
 ```ts
-import { ControllerBase, watch, DecoratedWatchedController } from 'react-redux-controller';
+import { ControllerBase, watch, DecoratedWatchedController } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
 
 @watch
@@ -198,7 +198,7 @@ const App = () => {
 
 ```ts
 // User.controller.ts
-import { ControllerBase, watch } from 'react-redux-controller';
+import { ControllerBase, watch } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
 import { UsersActions } from "./Users.actions";
 import { UsersStore } from "./Users.store";
@@ -226,7 +226,7 @@ If you can't use decorators, you have to add watcher to your controller.
 
 ```ts
 // User.watcher.ts
-import { watcher } from 'react-redux-controller';
+import { watcher } from '@tomas_light/react-redux-controller';
 
 import { UserActions } from './User.actions';
 import { UserController } from './User.controller';
@@ -248,7 +248,7 @@ export const UserWatcher = watcher<UserController>(
 
 ```ts
 // controllerWatchers.ts
-import { Watcher } from 'react-redux-controller';
+import { Watcher } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
 import { UserWatcher } from '/User.watcher';
 
@@ -262,7 +262,7 @@ export { controllerWatchers };
 ```ts
 // configRedux.ts
 import { combineReducers } from "redux";
-import { controllerMiddleware } from "react-redux-controller";
+import { controllerMiddleware } from "@tomas_light/react-redux-controller";
 import { controllerWatchers } from "./controllerWatchers";
 
 export function configureRedux() {
@@ -283,7 +283,7 @@ export function configureRedux() {
 You can define action creators by yourself;
 ```ts
 // Users.actions.ts
-import { createAction, createActionWithCallback } from "react-redux-controller";
+import { createAction, createActionWithCallback } from "@tomas_light/react-redux-controller";
 import { UsersStore } from "./Users.store";
 
 export class UsersActions {
