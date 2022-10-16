@@ -1,0 +1,50 @@
+{
+  "name": "react-redux-controller",
+  "version": "1.0.0",
+  "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
+  "contributors": [
+    {
+      "name": "Artem Ignatev",
+      "email": "art.ser.ignatiev@gmail.com"
+    }
+  ],
+  "author": "TomasLight",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "tsc",
+    "build": "tsc",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "test": "jest"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "reflect-metadata": "0.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "28.1.1",
+    "@typescript-eslint/eslint-plugin": "5.21.0",
+    "@typescript-eslint/parser": "5.21.0",
+    "cheap-di": "3.4.0",
+    "eslint": "8.17.0",
+    "eslint-plugin-sonarjs": "0.13.0",
+    "jest": "28.1.1",
+    "prettier": "2.7.1",
+    "ts-jest": "28.0.5",
+    "typescript": "4.6.4"
+  },
+  "peerDependencies": {
+    "cheap-di": ">= 3.4.0",
+    "react-redux": ">= 8.0.4",
+    "redux": ">= 4.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TomasLight/react-redux-controller"
+  },
+  "packageManager": "yarn@3.2.0"
+}
