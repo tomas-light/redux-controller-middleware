@@ -1023,8 +1023,8 @@ __metadata:
     "@types/jest": 28.1.1
     "@typescript-eslint/eslint-plugin": 5.21.0
     "@typescript-eslint/parser": 5.21.0
-    cheap-di: 3.4.0
-    cheap-di-react: 4.0.0
+    cheap-di: 3.4.2
+    cheap-di-react: 4.0.2
     eslint: 8.17.0
     eslint-plugin-sonarjs: 0.13.0
     jest: 28.1.1
@@ -1748,23 +1748,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cheap-di-react@npm:4.0.0":
-  version: 4.0.0
-  resolution: "cheap-di-react@npm:4.0.0"
+"cheap-di-react@npm:4.0.2":
+  version: 4.0.2
+  resolution: "cheap-di-react@npm:4.0.2"
   peerDependencies:
-    cheap-di: ">= 3.4.0"
+    cheap-di: ">= 3.4.2"
     react: ">= 17.0.2"
     react-dom: ">= 17.0.2"
-  checksum: d7e237ee09a32663d5cec5e44a49ce396504af291d2a024c6be4523084537c05d36faea4d5e7d20ee99984f2a7d51b605510b3739b1f5f69fe9532cf4a5f339a
+  checksum: 41ce7ab223deeb90cb208f538a016d02de6e7b1e3b14ea89fad5a2d88ad2d9e701a2060e680052172e4c72e213526a240bd36f594a236f63cd38ef135feb5a34
   languageName: node
   linkType: hard
 
-"cheap-di@npm:3.4.0":
-  version: 3.4.0
-  resolution: "cheap-di@npm:3.4.0"
+"cheap-di@npm:3.4.2":
+  version: 3.4.2
+  resolution: "cheap-di@npm:3.4.2"
   dependencies:
     reflect-metadata: 0.1.13
-  checksum: 7a855607bbf0a51b5ec971a91568fd334d5a33a9d4a0c71e347abe6083e9c77688060d912827d87f09fce4c5a0b4da58c230b4d6c55721520a9af180d474cfaa
+  checksum: 8d0c3988a83a51b96740cd60a28f77b72996bf37a8e8ae760be13b6c98a446960b0a0c550f86cfef9286c8a9682f0c2c42d3a7d64661a87b7f72b844df8684b2
   languageName: node
   linkType: hard
 

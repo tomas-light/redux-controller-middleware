@@ -3,6 +3,7 @@ import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { MetadataStorage } from '../MetadataStorage';
 import { Middleware } from '../Middleware';
 import { Action, ActionMaybeWithContainer, CallbackAction, isAction } from '../types';
+import { isDuckPromise } from './isDuckPromise';
 import { Watcher } from './Watcher';
 
 type MiddlewareOptions<State> = {
@@ -111,8 +112,12 @@ function controllerGenerator(
 				const controller = controllerFactory(watcher);
 				const promise = new Promise<void>((resolve) => {
 					setTimeout(() => {
-						controller[actionName](action);
-						resolve();
+						const maybePromise = controller[actionName](action);
+						if (isDuckPromise(maybePromise)) {
+							maybePromise.then(resolve);
+						} else {
+							resolve();
+						}
 					});
 				});
 
