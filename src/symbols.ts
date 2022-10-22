@@ -3,8 +3,4 @@ const controllerWatcherSymbol = Symbol('react-redux-controller controller watche
 
 const inheritancePreserveSymbol = Symbol('react-redux-controller watched constructor');
 
-export {
-  watchersSymbol,
-  controllerWatcherSymbol,
-  inheritancePreserveSymbol,
-};
+export { watchersSymbol, controllerWatcherSymbol, inheritancePreserveSymbol };

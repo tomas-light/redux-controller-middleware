@@ -3,12 +3,12 @@ export * from './controller';
 export * from './createAction';
 export * from './createActionWithCallback';
 export {
-  Action,
-  ActionWithCallback,
-  CallbackAction,
-  isAction,
-  DecoratedWatchedController,
-  WatchedController,
+	Action,
+	ActionWithCallback,
+	CallbackAction,
+	isAction,
+	DecoratedWatchedController,
+	WatchedController,
 } from './types';
 export * from './Reducer';
 export * from './decorators';

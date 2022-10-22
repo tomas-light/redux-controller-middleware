@@ -152,7 +152,7 @@ test('3 consistent actions with promises', async () => {
 	expect(nextCalled.length).toBe(1);
 });
 
-test('5 consistent actions with promises an stop propagation', async () => {
+test('5 consistent actions with promises and stop propagation', async () => {
 	const calledMethods: string[] = [];
 
 	const nextCalled: string[] = [];

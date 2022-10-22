@@ -1,7 +1,7 @@
-import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { Container, IHaveDependencies } from 'cheap-di';
-import { Middleware } from '../Middleware';
+import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { MetadataStorage } from '../MetadataStorage';
+import { Middleware } from '../Middleware';
 import { Action, ActionMaybeWithContainer, CallbackAction, isAction } from '../types';
 import { Watcher } from './Watcher';
 
