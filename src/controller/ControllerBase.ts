@@ -1,6 +1,5 @@
 import { Dispatch } from 'redux';
 import { Middleware } from '../Middleware';
-
 import { Action, Controller } from '../types';
 
 // simple decorator allows Reflect-metadata to scan classes ang get its metadata
@@ -8,11 +7,11 @@ import { Action, Controller } from '../types';
 const metadata = <T>(constructor: T): T => constructor;
 
 @metadata
-export abstract class ControllerBase<TState> implements Controller {
+export class ControllerBase<State extends {} = {}> implements Controller<State> {
 	protected readonly dispatch: Dispatch<Action>;
-	protected readonly getState: () => TState;
+	protected readonly getState: () => State;
 
-	constructor(middleware: Middleware<TState>) {
+	constructor(middleware: Middleware<State>) {
 		if (new.target === ControllerBase) {
 			throw new Error('Cannot construct ControllerBase instance directly');
 		}

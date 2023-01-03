@@ -66,7 +66,7 @@ test('if callback actions will be dispatched only after main action is ended one
 	})(next);
 
 	const action = controller1.init();
-	action.actions = [controller2.init()];
+	action.addNextActions(controller2.init());
 
 	await handleAction(action);
 	expect(callStack).toEqual([

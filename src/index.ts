@@ -1,11 +1,11 @@
 export * from './Middleware';
 export * from './controller';
+export { chainActions } from './chainActions';
 export * from './createAction';
-export * from './createActionWithCallback';
 export {
 	Action,
 	ActionWithCallback,
-	CallbackAction,
+	ActionFactory,
 	isAction,
 	DecoratedWatchedController,
 	WatchedController,

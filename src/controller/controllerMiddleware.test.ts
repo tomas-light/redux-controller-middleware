@@ -48,16 +48,16 @@ function makeMiddleware(calledMethods: string[]) {
 		kind = 'B';
 	}
 
-	const watchersA = watcher<any, ControllerA>(ControllerA, [
-		[ACTIONS.actionA1, 'method1'],
-		[ACTIONS.actionA2, 'method2'],
-		[ACTIONS.actionA3, 'method3'],
-	]);
-	const watchersB = watcher<any, ControllerB>(ControllerB, [
-		[ACTIONS.actionB1, 'method1'],
-		[ACTIONS.actionB2, 'method2'],
-		[ACTIONS.actionB3, 'method3'],
-	]);
+	const watchersA = watcher<keyof ControllerA>(ControllerA, {
+		[ACTIONS.actionA1]: 'method1',
+		[ACTIONS.actionA2]: 'method2',
+		[ACTIONS.actionA3]: 'method3',
+	});
+	const watchersB = watcher<keyof ControllerB>(ControllerB, {
+		[ACTIONS.actionB1]: 'method1',
+		[ACTIONS.actionB2]: 'method2',
+		[ACTIONS.actionB3]: 'method3',
+	});
 
 	return controllerMiddleware({ watchers: [watchersA, watchersB] });
 }
@@ -116,14 +116,19 @@ test('3 consistent actions', async () => {
 	const handleAction = middleware({} as any)(next);
 
 	const action = createAction(ACTIONS.actionA1);
-	action.actions = [createAction(ACTIONS.actionA2)];
-	action.callbackAction = () => createAction(ACTIONS.actionB1);
+	action.addNextActions(
+		//
+		createAction(ACTIONS.actionA2),
+		() => createAction(ACTIONS.actionB1)
+	);
 
 	await handleAction(action);
-	expect(calledMethods.length).toBe(3);
-	expect(calledMethods[0]).toBe('A1');
-	expect(calledMethods[1]).toBe('B1');
-	expect(calledMethods[2]).toBe('A2');
+	expect(calledMethods).toStrictEqual([
+		//
+		'A1',
+		'A2',
+		'B1',
+	]);
 
 	expect(nextCalled.length).toBe(1);
 });
@@ -140,14 +145,19 @@ test('3 consistent actions with promises', async () => {
 	const handleAction = middleware({} as any)(next);
 
 	const action = createAction(ACTIONS.actionA1);
-	action.actions = [createAction(ACTIONS.actionA2)];
-	action.callbackAction = () => createAction(ACTIONS.actionA3);
+	action.addNextActions(
+		//
+		() => createAction(ACTIONS.actionA3),
+		createAction(ACTIONS.actionA2)
+	);
 
 	await handleAction(action);
-	expect(calledMethods.length).toBe(3);
-	expect(calledMethods[0]).toBe('A1');
-	expect(calledMethods[1]).toBe('A3');
-	expect(calledMethods[2]).toBe('A2');
+	expect(calledMethods).toStrictEqual([
+		//
+		'A1',
+		'A3',
+		'A2',
+	]);
 
 	expect(nextCalled.length).toBe(1);
 });
@@ -166,18 +176,19 @@ test('5 consistent actions with promises and stop propagation', async () => {
 	const action = createAction(ACTIONS.actionA1);
 
 	const bAction = createAction(ACTIONS.actionB1);
-	bAction.stopPropagation = true;
-	bAction.actions = [createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3)];
+	bAction.stop();
+	bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
 
-	action.actions = [createAction(ACTIONS.actionA2), bAction];
-	action.callbackAction = () => createAction(ACTIONS.actionA3);
+	action.addNextActions(createAction(ACTIONS.actionA2), bAction, () => createAction(ACTIONS.actionA3));
 
 	await handleAction(action);
-	expect(calledMethods.length).toBe(4);
-	expect(calledMethods[0]).toBe('A1');
-	expect(calledMethods[1]).toBe('A3');
-	expect(calledMethods[2]).toBe('A2');
-	expect(calledMethods[3]).toBe('B1');
+	expect(calledMethods).toStrictEqual([
+		//
+		'A1',
+		'A2',
+		'B1',
+		'A3',
+	]);
 
 	expect(nextCalled.length).toBe(1);
 });
@@ -191,7 +202,7 @@ test('5 consistent actions with promises and stop propagation', async () => {
 //
 // 	const actionType = 'action type 1';
 //
-// 	const watchers = watcher<any, Controller>(Controller, [[actionType, 'action1']]);
+// 	const watchers = watcher<keyof Controller>(Controller, [[actionType, 'action1']]);
 //
 // 	const middleware = controllerMiddleware({ watchers: [watchers] });
 // 	const next = (action: any) => ({} as any);

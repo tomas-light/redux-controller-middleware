@@ -2,95 +2,60 @@ import { Container, IHaveDependencies } from 'cheap-di';
 import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { MetadataStorage } from '../MetadataStorage';
 import { Middleware } from '../Middleware';
-import { Action, ActionMaybeWithContainer, CallbackAction, isAction } from '../types';
+import { Action, ActionFactory, ActionMaybeWithContainer, isAction } from '../types';
 import { isDuckPromise } from './isDuckPromise';
+import { makeControllerFactory } from './makeControllerFactory';
+import { tryToFindDependencyContainer } from './tryToFindDependencyContainer';
 import { Watcher } from './Watcher';
 
-type MiddlewareOptions<State> = {
-	watchers?: Watcher<State, any>[];
+type MiddlewareOptions = {
+	watchers?: Watcher[];
 	getContainer?: () => Container & IHaveDependencies;
 };
 
-function controllerMiddleware<State>(options: MiddlewareOptions<State> = {}): ReduxMiddleware<Dispatch, State> {
+function controllerMiddleware<State>(options: MiddlewareOptions = {}): ReduxMiddleware<Dispatch, State> {
 	const { watchers = [], getContainer } = options;
 
-	return (middlewareAPI: MiddlewareAPI<Dispatch, State>) =>
-		(next: (action: ActionMaybeWithContainer) => void) =>
-		async (action: ActionMaybeWithContainer) => {
-			const controllerFactory = makeControllerFactory({
-				action,
-				middlewareAPI,
-				getContainer,
-			});
-
-			if (!isAction(action)) {
-				return;
-			}
-
-			const generator = controllerGenerator(watchers, controllerFactory, action);
-
-			let iterator: IteratorResult<Promise<any>>;
-			do {
-				iterator = generator.next();
-				if (!iterator.done) {
-					try {
-						await iterator.value;
-					} catch (error) {
-						console.error('Unhandled exception in controller', error);
-					}
+	return (middlewareAPI: MiddlewareAPI<Dispatch, State>) => {
+		return (next: (action: ActionMaybeWithContainer) => void) => {
+			return async (action: ActionMaybeWithContainer) => {
+				const container = tryToFindDependencyContainer(action, getContainer);
+				if (container) {
+					container.registerInstance(middlewareAPI).as(Middleware);
 				}
-			} while (!iterator.done);
 
-			next(action);
+				if (!isAction(action)) {
+					return;
+				}
+
+				const controllerFactory = makeControllerFactory(middlewareAPI, container);
+				const generator = controllerGenerator(watchers, controllerFactory, action);
+
+				let iterator: IteratorResult<Promise<any>>;
+				do {
+					iterator = generator.next();
+					if (!iterator.done) {
+						try {
+							await iterator.value;
+						} catch (error) {
+							console.error('Unhandled exception in controller', error);
+						}
+					}
+				} while (!iterator.done);
+
+				next(action);
+			};
 		};
-}
-
-function makeControllerFactory<State>(params: {
-	action: ActionMaybeWithContainer;
-	middlewareAPI: MiddlewareAPI<Dispatch, State>;
-	getContainer?: () => Container & IHaveDependencies;
-}) {
-	const { action, middlewareAPI, getContainer } = params;
-
-	let factory: (watcher: Watcher<any, any>) => any;
-
-	let container: (Container & IHaveDependencies) | undefined = undefined;
-	if (typeof getContainer === 'function') {
-		container = getContainer();
-	}
-	// scope container has higher priority
-	if (action.container) {
-		container = action.container;
-	}
-
-	if (container) {
-		container.registerInstance(middlewareAPI).as(Middleware);
-
-		factory = (watcher: Watcher<any, any>) => {
-			const isNotRegisteredType = container!.dependencies instanceof Map && !container!.dependencies.has(watcher.type);
-
-			// it can be registered as another type or with injected params,
-			// and we should not override such registration
-			if (isNotRegisteredType) {
-				container!.registerType(watcher.type);
-			}
-
-			return container!.resolve(watcher.type);
-		};
-	} else {
-		factory = (watcher: Watcher<any, any>) => watcher.instance(middlewareAPI);
-	}
-
-	return factory;
+	};
 }
 
 function controllerGenerator(
-	watchers: Watcher<any, any>[],
-	controllerFactory: (watcher: Watcher<any, any>) => any,
+	watchers: Watcher[],
+	controllerFactory: (watcher: Watcher) => any,
 	initAction: Action
 ): IterableIterator<Promise<any>> {
 	let actionCursor = 0;
-	const actions: CallbackAction[] = [() => initAction];
+	const actions: ActionFactory[] = [() => initAction];
 
 	function iterator(): IteratorResult<Promise<any>> {
 		if (actionCursor >= actions.length) {
@@ -147,4 +112,5 @@ function controllerGenerator(
 	};
 }
 
+export type { MiddlewareOptions };
 export { controllerMiddleware };

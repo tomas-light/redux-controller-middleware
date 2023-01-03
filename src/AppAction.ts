@@ -1,13 +1,14 @@
 import { Container, IHaveDependencies } from '../../cheap-di';
-import { Action, ActionMaybeWithContainer, CallbackAction } from './types';
+import { Action, ActionMaybeWithContainer, ActionFactory } from './types';
 
 export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayload> {
 	type: any;
 	payload: TPayload;
 
-	callbackAction?: CallbackAction;
-	actions?: AppAction[];
-	stopPropagation?: boolean;
+	readonly actions: (Action | ActionFactory)[];
+
+	stopPropagation: boolean;
+
 	container?: Container & IHaveDependencies;
 
 	constructor(type: string, payload?: TPayload) {
@@ -17,44 +18,62 @@ export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayl
 		this.stopPropagation = false;
 	}
 
-	static stop(appAction: Action): void {
-		appAction.stopPropagation = true;
+	static addNextActions(appAction: Action, ...actions: (Action | ActionFactory)[]) {
+		appAction.actions.push(...actions);
 	}
 
-	static getActions(appAction: Action): CallbackAction[] {
-		const actions: CallbackAction[] = [];
+	static stop(appAction: Action): void {
+		(appAction as AppAction).stopPropagation = true;
+	}
 
-		if (typeof appAction.callbackAction === 'function') {
-			actions.push(appAction.callbackAction);
+	static getActions(appAction: Action): ActionFactory[] {
+		if (!Array.isArray(appAction.actions)) {
+			return [];
 		}
 
-		if (Array.isArray(appAction.actions) && appAction.actions.length > 0) {
-			appAction.actions.forEach((action) => {
-				actions.push(() => action);
-			});
-		}
+		return appAction.actions.map((actionOrFactory) => {
+			if (typeof actionOrFactory === 'function') {
+				return actionOrFactory;
+			}
+			return () => actionOrFactory;
+		});
+	}
 
-		return actions;
+	addNextActions(...actions: (Action | ActionFactory)[]) {
+		AppAction.addNextActions(this, ...actions);
 	}
 
 	stop(): void {
 		AppAction.stop(this);
 	}
 
-	getActions(): CallbackAction[] {
+	getActions(): ActionFactory[] {
 		return AppAction.getActions(this);
 	}
 
 	toPlainObject(): Action {
 		const keys = Object.keys(this) as (keyof AppAction)[];
-		const plainObject: Action = {} as any;
+		const plainObject = {} as Action;
 
 		keys.forEach((key) => {
-			if (key !== 'toPlainObject') {
-				plainObject[key] = this[key];
+			// skip property
+			if (key === 'toPlainObject') {
+				return;
 			}
+			if (key === 'actions') {
+				plainObject[key as any] = this[key];
+				return;
+			}
+			if (key === 'stopPropagation') {
+				plainObject[key as any] = this[key];
+				return;
+			}
+			plainObject[key] = this[key];
 		});
 
+		plainObject.addNextActions = function (...actions: Action[]) {
+			AppAction.addNextActions(this, ...actions);
+		};
 		plainObject.stop = function () {
 			AppAction.stop(this);
 		};

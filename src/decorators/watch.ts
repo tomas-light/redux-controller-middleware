@@ -2,7 +2,7 @@ import { watcher } from '../controller';
 import { createAction } from '../createAction';
 import { MetadataStorage } from '../MetadataStorage';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
-import { Constructor, WatchedConstructor } from '../types';
+import { ActionType, Constructor, Controller, ControllerConstructor, WatchedConstructor } from '../types';
 import { extractMethodNameFromActionType } from './extractMethodNameFromActionType';
 import { InheritancePreserver } from './InheritancePreserver';
 import { makeActionType } from './makeActionType';
@@ -12,7 +12,9 @@ type Prototype<T = any> = {
 };
 
 // constructor
-function watch<TConstructor extends Constructor>(constructor: TConstructor): TConstructor;
+function watch<TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
+	constructor: TConstructor
+): TConstructor;
 // method factory
 function watch(actionType: string): (prototype: any, propertyKey: string) => void;
 // method
@@ -31,36 +33,36 @@ function watch(constructorOrActionType?: any) {
 	return watchMethod(constructorOrActionType as string);
 }
 
-function watchConstructor(constructor: Constructor) {
-	const watched = InheritancePreserver.getModifiedConstructor<WatchedConstructor>(constructor);
-	const watchers = watched[watchersSymbol];
+function watchConstructor<TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
+	constructor: TConstructor
+): TConstructor {
+	const watchedConstructor = InheritancePreserver.getModifiedConstructor<WatchedConstructor<TController>>(constructor);
+	const actionTypeToMethodNameRecords = watchedConstructor[watchersSymbol];
 
-	if (watchers) {
+	if (actionTypeToMethodNameRecords) {
 		// add action creators to static methods of the controller
-		Object.keys(watchers).forEach((actionType) => {
-			const staticMethodName = extractMethodNameFromActionType(actionType, watched.name);
-			watched[staticMethodName as unknown as keyof typeof watched] = (payload?: any) =>
-				createAction(actionType, payload);
+		Object.keys(actionTypeToMethodNameRecords).forEach((actionType) => {
+			const staticMethodName = extractMethodNameFromActionType(actionType, watchedConstructor.name) as string;
+
+			watchedConstructor[staticMethodName] = (payload?: any) => createAction(actionType, payload);
 		});
 
-		let _watcher = watched[controllerWatcherSymbol];
-		if (!_watcher) {
-			const watchList = Object.keys(watchers).map(
-				(actionType) => [actionType, watchers[actionType]] as [string, string]
-			);
-			_watcher = watched[controllerWatcherSymbol] = watcher(watched, watchList);
-			MetadataStorage.addImplicitWatcher(_watcher);
+		let controllerWatcher = watchedConstructor[controllerWatcherSymbol];
+		if (!controllerWatcher) {
+			watchedConstructor[controllerWatcherSymbol] = watcher(watchedConstructor, actionTypeToMethodNameRecords);
+			controllerWatcher = watchedConstructor[controllerWatcherSymbol];
+			MetadataStorage.addImplicitWatcher(controllerWatcher);
 		}
 	}
 
 	return constructor;
 }
 
-function watchMethod(actionType?: string) {
+function watchMethod(actionType?: ActionType) {
 	return function (prototype: Prototype, propertyKey: string) {
 		let watched = InheritancePreserver.getModifiedConstructor<WatchedConstructor>(prototype.constructor);
 		if (!watched) {
-			watched = prototype.constructor;
+			watched = prototype.constructor as WatchedConstructor;
 
 			if (!watched[watchersSymbol]) {
 				watched[watchersSymbol] = {};

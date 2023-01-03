@@ -1,25 +1,16 @@
-import { Dispatch, MiddlewareAPI } from 'redux';
+import { ActionType, ControllerConstructor } from '../types';
 
-import { Controller } from '../types';
-import { ControllerBase } from './ControllerBase';
-
-type Watcher<State, TController extends Controller> = {
-	has: (actionType: string) => boolean;
-	get: (actionType: string) => keyof TController | undefined;
-	instance: (middlewareAPI: MiddlewareAPI<Dispatch, State>) => ControllerBase<State>;
-	type: new (middlewareAPI: MiddlewareAPI<Dispatch, State>, ...args: any[]) => ControllerBase<State>;
+type Watcher = {
+	get: (actionType: ActionType) => string | undefined;
+	type: ControllerConstructor;
 };
 
-function watcher<State, TController extends Controller>(
-	Controller: new (middlewareAPI: MiddlewareAPI<Dispatch, State>, ...args: any[]) => ControllerBase<State>,
-	watchList: [string, keyof TController][]
-): Watcher<State, TController> {
-	const map = new Map<string, keyof TController>(watchList);
-
+function watcher<MethodNames extends string = string>(
+	Controller: ControllerConstructor,
+	actionTypeToMethodNameRecords: Record<ActionType, MethodNames>
+): Watcher {
 	return {
-		has: (actionType: string) => map.has(actionType),
-		get: (actionType: string) => map.get(actionType),
-		instance: (middlewareAPI: MiddlewareAPI<Dispatch, State>) => new Controller(middlewareAPI),
+		get: (actionType) => actionTypeToMethodNameRecords[actionType],
 		type: Controller,
 	};
 }

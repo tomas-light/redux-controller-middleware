@@ -1,7 +1,7 @@
 import { AppAction } from './AppAction';
-import { Action } from './types';
+import { Action, ActionType } from './types';
 
-export function createAction<Payload>(actionType: string, payload: Payload = {} as any): Action {
+export function createAction<Payload>(actionType: ActionType, payload: Payload = {} as any): Action {
 	let _payload;
 
 	if (typeof payload === 'object' && !Array.isArray(payload)) {

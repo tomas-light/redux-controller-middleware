@@ -1,26 +1,44 @@
 import { AnyAction } from 'redux';
 import { Container, IHaveDependencies } from '../../cheap-di';
 import { Watcher } from './controller';
+import { Middleware } from './Middleware';
 import { controllerWatcherSymbol, inheritancePreserveSymbol, watchersSymbol } from './symbols';
+
+type ActionType = string;
 
 interface Action<Payload = any> extends AnyAction {
 	payload: Payload;
 
-	callbackAction?: CallbackAction;
-	actions?: Action[];
-	stopPropagation?: boolean;
+	/** next actions chain (actions that will be dispatched after handling of this one) */
+	readonly actions: (Action | ActionFactory)[];
 
+	/** is action chain stopped or not */
+	readonly stopPropagation: boolean;
+
+	/**
+	 * Add an action (or actions) that will be dispatched right after of executing this action.
+	 * @example
+	 * const authorizeAction = createAction('AUTH');
+	 * const loadProfileAction = createAction('LOAD_MY_PROFILE');
+	 * const loadSettingsAction = createAction('LOAD_MY_SETTINGS');
+	 * authorizeAction.addNextActions(loadProfileAction, loadSettingsAction);
+	 * dispatch(authorizeAction);
+	 * */
+	addNextActions(...actions: (Action | ActionFactory)[]): void;
+
+	/** If the action has next actions in chain, this method stops them from dispatching */
 	stop(): void;
 
-	getActions(): CallbackAction[];
+	/** returns `next actions chain of this action */
+	getActions(): ActionFactory[];
 }
 
 interface ActionMaybeWithContainer<Payload = any> extends Action<Payload> {
 	container?: Container & IHaveDependencies;
 }
 
-type ActionWithCallback = (callbackAction: CallbackAction) => Action;
-type CallbackAction = () => Action;
+type ActionWithCallback = (actionFactory: ActionFactory) => Action;
+type ActionFactory = () => Action;
 
 function isAction(action: any): action is Action {
 	return (
@@ -34,15 +52,22 @@ function isAction(action: any): action is Action {
 
 type Constructor<T = any> = new (...args: any[]) => T;
 
-type WatchedConstructor<T = any> = Constructor<T> & {
-	[inheritancePreserveSymbol]?: T;
-	[watchersSymbol]?: {
-		[actionType: string]: string; // callable method name
-	};
-	[controllerWatcherSymbol]?: Watcher<any, T>;
+type StaticActionsCreator = {
+	[actionName: string]: (payload?: any) => Action;
 };
 
-interface Controller {}
+type WatchedConstructor<TController extends Controller = Controller> = Constructor<TController> & {
+	[inheritancePreserveSymbol]?: TController;
+	[watchersSymbol]?: {
+		[actionType: ActionType]: string; // callable method name
+	};
+	[controllerWatcherSymbol]?: Watcher;
+} & StaticActionsCreator;
+
+interface ControllerConstructor<State extends {} = {}> {
+	new (middlewareAPI: Middleware, ...args: any[]): Controller<State>;
+}
+interface Controller<State extends {} = any> {}
 
 type IsString<Type> = Type extends string ? Type : never;
 
@@ -54,9 +79,9 @@ type SimpleActions<Watchers extends readonly any[]> = Watchers extends (infer It
 
 type ComplexAction<Watchers extends readonly any[]> = Watchers extends (infer Item)[]
 	? {
-			[property in Item extends [infer ActionType, NonNullable<any>]
-				? ActionType extends string
-					? ActionType
+			[property in Item extends [infer TActionType, NonNullable<any>]
+				? TActionType extends ActionType
+					? TActionType
 					: never
 				: never]: Item extends [property, NonNullable<infer Payload>] ? (payload: Payload) => Action<Payload> : never;
 	  }
@@ -75,11 +100,13 @@ type WatchedController<TController extends Controller> = {
 };
 
 export type {
+	ActionType,
+	ControllerConstructor,
 	Controller,
 	Action,
 	ActionWithCallback,
 	ActionMaybeWithContainer,
-	CallbackAction,
+	ActionFactory,
 	Constructor,
 	WatchedConstructor,
 	DecoratedWatchedController,

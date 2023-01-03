@@ -4,14 +4,14 @@ import { Watcher } from './controller';
 const IMPLICIT_WATCHER_METADATA_KEY = 'react-redux-controller controller implicit watchers';
 
 type MetadataWatchObject = {
-	watchers: Set<Watcher<any, any>>;
+	watchers: Set<Watcher>;
 };
 const WatchObject: MetadataWatchObject = {
 	watchers: new Set(),
 };
 
 export class MetadataStorage {
-	static addImplicitWatcher(watcher: Watcher<any, any>) {
+	static addImplicitWatcher(watcher: Watcher) {
 		const watchObject = MetadataStorage.getWatchObject();
 
 		watchObject.watchers.add(watcher);
@@ -19,7 +19,7 @@ export class MetadataStorage {
 		Reflect.defineMetadata(IMPLICIT_WATCHER_METADATA_KEY, watchObject, WatchObject, '');
 	}
 
-	static getImplicitWatchers(): Watcher<any, any>[] {
+	static getImplicitWatchers(): Watcher[] {
 		const watchObject = MetadataStorage.getWatchObject() ?? WatchObject;
 		return Array.from(watchObject.watchers);
 	}
