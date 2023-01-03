@@ -1,8 +1,8 @@
-* [install](#Installation)
-* [usage](#How to use controllers)
-* [controllers-di](#Register dependencies)
-* [without-decorators](#Without decorators)
-* [manual](#Manual action creating)
+* [Installation](#install)
+* [How to use controllers](#usage)
+* [Register dependencies](#controller-di)
+* [Without decorators](#without-decorators)
+* [Manual action creating](#manual)
 
 ### <a name="install"></a> Installation
 
