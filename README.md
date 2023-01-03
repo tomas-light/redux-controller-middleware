@@ -2,7 +2,7 @@
 * [How to use controllers](#usage)
 * [Register dependencies](#controller-di)
 * [Without decorators](#without-decorators)
-* [Manual action creating](#manual)
+* [Action creating](#action-creating)
 
 ### <a name="install"></a> Installation
 
@@ -30,13 +30,12 @@ class UserStore {
 }
 ```
 
-Register store reducer and add @tomas_light/react-redux-controller middleware to redux. 
+Register store reducer and add react-redux-controller middleware to redux. 
 You can also register DI container, that allows you to inject services in controllers.
 ```ts
 // configRedux.ts
 import { combineReducers } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
-
 import { controllerMiddleware } from "@tomas_light/react-redux-controller";
 import { container } from "cheap-di";
 
@@ -49,14 +48,14 @@ export function configureRedux() {
   });
 
   const middleware = controllerMiddleware<ReturnType<typeof rootReducer>>({
-    // add cheap-di container to as DI resolver
+    // use cheap-di container for Dependency Injection
     container,
   });
 
   const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-      // add our middleware to redux
+      // add react-redux-controller middleware to redux
       getDefaultMiddleware().concat([middleware]),
   });
 
@@ -72,22 +71,23 @@ import { configureRedux } from "./configureRedux";
 export type State = ReturnType<ReturnType<typeof configureRedux>["getState"]>;
 ```
 
-Create a controller to encapsulate a piece of application business logic.
+Create a controller to encapsulate a piece of application logic.
 ```ts
 // User.controller.ts
-import { ControllerBase, watch } from '@tomas_light/react-redux-controller';
+import { ControllerBase, createAction, watch } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
-import { UsersActions } from "./Users.actions";
 import { UsersStore } from "./Users.store";
 
-@watch // this decorator adds action creators as static members of class
+// prepare the class to use static methods for creating of actions
+@watch
 export class UserController extends ControllerBase<State> {
   // just to shorcat store update calls
   private updateStore(partialStore: Partial<UsersStore>) {
-    this.dispatch(UsersActions.updateStore(partialStore));
+    this.dispatch(createAction(UsersStore.update, partialStore));
   }
 
-  @watch // add register action creator with name of method
+  // add action creator with name of the method: { type: 'loadUserList' }
+  @watch
   async loadUserList() {
     this.updateStore({
       usersAreLoading: true,
@@ -115,6 +115,9 @@ export class UserController extends ControllerBase<State> {
   @watch loadSomethingElse() {/*...*/}
 }
 
+// there are restrictions from decorators in TS - it cannot to change type of the decorated class,
+// so we should manually do it =(
+// WatchedController takes all methods of the class and adds type definition for static action creators
 const typedController = (UserController as unknown) as WatchedController<UserController>;
 export { typedController as UserController };
 ```
@@ -144,7 +147,7 @@ That's it!
 #### <a name="usage"></a> Custom action names
 
 You can use custom action name, like `@watch('myCustomActionName')`.
-But in this case you should change define this method with `DecoratedWatchedController`
+But in this case you should change definition of such method with `DecoratedWatchedController`
 
 ```ts
 import { ControllerBase, watch, DecoratedWatchedController } from '@tomas_light/react-redux-controller';
@@ -173,23 +176,40 @@ export { typedController as UserController };
 ### <a name="controller-di"></a> Register dependencies
 
 ```ts
-// UserApi.ts
+// api.ts
+
+const metadata = <T>(constructor: T): T => constructor;
+
 export class UserApi {
   loadUsers() {
     return fetch('/api/users');
   }
 }
+
+export abstract class AccessKey {
+  abstract key: string;
+}
+
+@metadata // need any decorator (read cheap-di docs)
+export class UserStorage {
+  constructor(private readonly accessKey: AccessKey) {}
+  
+  store(value: string) {
+    localStorage.set(this.accessKey.key, value);
+  }
+}
 ```
+
 
 ```ts
 // App.tsx
 import { useEffect } from 'react';
 import { container } from 'cheap-di';
-import { UserApi } from './UserApi';
+import { AccessKey } from './api';
 
 const App = () => {
   useEffect(() => {
-    container.registerType(UserApi);
+    container.registerInstance({ key: 'my-secure-key' }).as(AccessKey);
   }, []);
 
   return /* your layout */;
@@ -200,19 +220,23 @@ const App = () => {
 // User.controller.ts
 import { ControllerBase, watch } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
-import { UsersActions } from "./Users.actions";
-import { UsersStore } from "./Users.store";
+import { UserApi, UserStorage } from './api';
 
 @watch
 export class UserController extends ControllerBase<State> {
-  constructor(middleware: Middleware<State>, private userApi: UserApi) {
+  constructor(
+    middleware: Middleware<State>,
+    private readonly api: UserApi, // will be instantiated automaticly
+    private readonly storage: UserStorage // will be instantiated with registered AccessKey
+  ) {
     super(middleware);
   }
 
   @watch
   async loadUserList() {
-    const response = await this.userApi.loadUsers();
-    /*...*/
+    const response = await this.api.loadUsers();
+    this.storage.store(response.data);
+    // ...
   }
 }
 
@@ -227,32 +251,23 @@ If you can't use decorators, you have to add watcher to your controller.
 ```ts
 // User.watcher.ts
 import { watcher } from '@tomas_light/react-redux-controller';
-
 import { UserActions } from './User.actions';
 import { UserController } from './User.controller';
 
-export const UserWatcher = watcher<UserController>(
-  UserController,
-  [
-    [
-      UserActions.LOAD_USER_LIST,
-      'loadUserList', // typescript will check that this string corresponds to real method name in your controller
-    ],
-    [
-      UserActions.LOAD_USER,
-      'loadUser',
-    ],
-    //...
-  ]);
+export const UserWatcher = watcher(UserController,
+{
+  [UserActions.LOAD_USER_LIST]: 'loadUserList', // typescript will check that this string corresponds to real method name in your controller
+  [UserActions.LOAD_USER]: 'loadUser',
+  //...
+});
 ```
 
 ```ts
 // controllerWatchers.ts
 import { Watcher } from '@tomas_light/react-redux-controller';
-import { State } from "./State";
 import { UserWatcher } from '/User.watcher';
 
-const controllerWatchers: Watcher<State>[] = [
+const controllerWatchers: Watcher[] = [
   UserWatcher,
   // rest watchers
 ];
@@ -279,52 +294,16 @@ export function configureRedux() {
 }
 ```
 
-### <a name="manual"></a> Manual action creating
+### <a name="action-creating"></a> Action creating
 You can define action creators by yourself;
 ```ts
-// Users.actions.ts
-import { createAction, createActionWithCallback } from "@tomas_light/react-redux-controller";
-import { UsersStore } from "./Users.store";
+import { createAction } from "@tomas_light/react-redux-controller";
 
 export class UsersActions {
-  static readonly PREFIX = "USERS_";
-
-  static readonly LOAD_USER_LIST = `${UsersActions.PREFIX}LOAD_USER_LIST`;
-  static readonly LOAD_USER = `${UsersActions.PREFIX}LOAD_USER`;
-  static readonly LOAD_CURRENT_USER = `${UsersActions.PREFIX}LOAD_CURRENT_USER`;
-  static readonly LOAD_SOMETHING_ELSE = `${UsersActions.PREFIX}LOAD_SOMETHING_ELSE`;
-
+  static LOAD_USER_LIST = 'LOAD_USER_LIST';
   static loadUserList = () => createAction(UsersActions.LOAD_USER_LIST);
+
+  static LOAD_USER = 'LOAD_USER';
   static loadUser = (data: { userID: string }) => createAction(UsersActions.LOAD_USER, data);
-  static loadCurrentUser = () => createActionWithCallback(UsersActions.LOAD_CURRENT_USER);
-  static loadSomethingElse = () => createAction(UsersActions.LOAD_SOMETHING_ELSE);
 }
-```
-
-```ts
-// UsersPageContainer.ts
-import { ComponentType } from "react";
-import { connect } from "react-redux";
-import { Dispatch } from "redux";
-
-import { UsersActions } from "./Users.actions";
-import { Props, UsersPage } from "./UsersPage";
-
-const mapDispatchToProps = (dispatch: Dispatch): Props => ({
-  loadUsers: () => dispatch(UsersActions.loadUserList()),
-  loadUser: (userID: string) => dispatch(UsersActions.loadUser({ userID })),
-  loadCurrentUser: () => dispatch(
-    UsersActions.loadCurrentUser()(
-      // this action will be dispatched after loadCurrentUser will be handled in controller
-      () => UsersActions.loadSomethingElse()
-    )
-  ),
-});
-
-const UsersPageContainer: ComponentType = connect(
-  null,
-  mapDispatchToProps
-)(UsersPage);
-
-export { UsersPageContainer };
 ```
