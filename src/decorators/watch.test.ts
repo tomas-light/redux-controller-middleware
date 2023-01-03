@@ -2,7 +2,7 @@ import { ControllerBase } from '../controller';
 import { createAction } from '../createAction';
 import { Reducer } from '../Reducer';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
-import { Action, DecoratedWatchedController, WatchedConstructor } from '../types';
+import { Action, ControllerWithCustomActionTypes, WatchedConstructor, WatchedController } from '../types';
 import { watch } from './watch';
 
 test('', () => {
@@ -37,8 +37,10 @@ test('', () => {
 	expect(watcher!.get('My_loadUsers')).toEqual('loadUsers');
 	expect(watcher!.get('My_openUserForEditing')).toEqual('openUser');
 
-	const myController: DecoratedWatchedController<['loadUsers', ['openUserForEditing', { userID: string }]]> =
-		MyController as any;
+	const myController: Omit<WatchedController<MyController>, 'openUserForEditing'> &
+		ControllerWithCustomActionTypes<{
+			openUserForEditing: { userID: string };
+		}> = MyController as any;
 
 	// you can use it as `dispatch(myController.method1());`
 

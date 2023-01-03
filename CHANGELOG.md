@@ -1,5 +1,53 @@
 # Changelog
 
+### 1.3.0
+
+BREAKING CHANGES:
+* removed `DecoratedWatchedController` (use `ControllerWithCustomActionTypes` instead of it);
+* changed generic of `Action`, now by default Payload is `undefined` (before it was `any`);
+* removed type `ActionWithCallback`;
+
+Features:
+* added `ControllerWithCustomActionTypes` type for customized action types:
+```ts
+import { Action, ControllerBase, ControllerWithCustomActionTypes, watch, WatchedController } from '@tomas_light/react-redux-controller';
+
+type MyState = {};
+type OpenUserActionPayload = { userID: string };
+
+@watch
+class MyController extends ControllerBase<MyState> {
+  @watch
+  check(action: Action) {}
+
+  @watch
+  loadUsers() {}
+
+  @watch('openUserForEditing')
+  openUser(action: Action<OpenUserActionPayload>) {}
+}
+
+const myController: Omit<WatchedController<MyController>, 'openUserForEditing'> &
+  ControllerWithCustomActionTypes<{
+    openUserForEditing: OpenUserActionPayload;
+  }> = MyController as any;
+
+export { myController as MyController };
+```
+* improved `watcher` type;
+
+Bugfix:
+* fixed type bug, when you have to pass something to action creator in case:
+```
+class Controller {
+  @watch
+  myMethod(action: Action) {/*...*/}
+}
+
+dispatch(Controller.myMethod(null)); // before
+dispatch(Controller.myMethod()); // after
+```
+
 ### 1.2.0
 
 BREAKING CHANGES:

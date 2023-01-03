@@ -16,7 +16,7 @@ function addContainerToAction(action: ReduxAction, diContext: DiContextType) {
 	const { type } = action;
 	delete action.type;
 
-	const newAction = createAction(type, {});
+	const newAction = createAction<any>(type, {});
 	for (const [key, value] of Object.entries(action)) {
 		newAction.payload[key] = value;
 	}

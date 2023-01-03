@@ -2,11 +2,10 @@ import { Container, IHaveDependencies } from 'cheap-di';
 import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { MetadataStorage } from '../MetadataStorage';
 import { Middleware } from '../Middleware';
-import { Action, ActionFactory, ActionMaybeWithContainer, isAction } from '../types';
+import { Action, ActionFactory, ActionMaybeWithContainer, isAction, Watcher } from '../types';
 import { isDuckPromise } from './isDuckPromise';
 import { makeControllerFactory } from './makeControllerFactory';
 import { tryToFindDependencyContainer } from './tryToFindDependencyContainer';
-import { Watcher } from './Watcher';
 
 type MiddlewareOptions = {
 	watchers?: Watcher[];

@@ -3,7 +3,7 @@ import { createAction } from '../createAction';
 import { Action } from '../types';
 import { ControllerBase } from './ControllerBase';
 import { controllerMiddleware } from './controllerMiddleware';
-import { watcher } from './Watcher';
+import { watcher } from './watcher';
 
 const ACTIONS = {
 	actionA1: 'ACTION_A_1',
@@ -48,12 +48,12 @@ function makeMiddleware(calledMethods: string[]) {
 		kind = 'B';
 	}
 
-	const watchersA = watcher<keyof ControllerA>(ControllerA, {
+	const watchersA = watcher(ControllerA, {
 		[ACTIONS.actionA1]: 'method1',
 		[ACTIONS.actionA2]: 'method2',
 		[ACTIONS.actionA3]: 'method3',
 	});
-	const watchersB = watcher<keyof ControllerB>(ControllerB, {
+	const watchersB = watcher(ControllerB, {
 		[ACTIONS.actionB1]: 'method1',
 		[ACTIONS.actionB2]: 'method2',
 		[ACTIONS.actionB3]: 'method3',

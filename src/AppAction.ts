@@ -1,9 +1,9 @@
 import { Container, IHaveDependencies } from '../../cheap-di';
 import { Action, ActionMaybeWithContainer, ActionFactory } from './types';
 
-export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayload> {
+export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<Payload> {
 	type: any;
-	payload: TPayload;
+	payload: Payload;
 
 	readonly actions: (Action | ActionFactory)[];
 
@@ -11,22 +11,22 @@ export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayl
 
 	container?: Container & IHaveDependencies;
 
-	constructor(type: string, payload?: TPayload) {
+	constructor(type: string, payload?: Payload) {
 		this.type = type;
-		this.payload = payload as TPayload;
+		this.payload = payload as Payload;
 		this.actions = [];
 		this.stopPropagation = false;
 	}
 
-	static addNextActions(appAction: Action, ...actions: (Action | ActionFactory)[]) {
+	static addNextActions<Payload>(appAction: Action<Payload>, ...actions: (Action | ActionFactory)[]) {
 		appAction.actions.push(...actions);
 	}
 
-	static stop(appAction: Action): void {
-		(appAction as AppAction).stopPropagation = true;
+	static stop<Payload>(appAction: Action<Payload>): void {
+		(appAction as AppAction<Payload>).stopPropagation = true;
 	}
 
-	static getActions(appAction: Action): ActionFactory[] {
+	static getActions<Payload>(appAction: Action<Payload>): ActionFactory[] {
 		if (!Array.isArray(appAction.actions)) {
 			return [];
 		}
@@ -51,9 +51,9 @@ export class AppAction<TPayload = any> implements ActionMaybeWithContainer<TPayl
 		return AppAction.getActions(this);
 	}
 
-	toPlainObject(): Action {
-		const keys = Object.keys(this) as (keyof AppAction)[];
-		const plainObject = {} as Action;
+	toPlainObject(): Action<Payload> {
+		const keys = Object.keys(this) as (keyof AppAction<Payload>)[];
+		const plainObject = {} as Action<Payload>;
 
 		keys.forEach((key) => {
 			// skip property

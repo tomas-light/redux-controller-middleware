@@ -2,7 +2,14 @@ import { watcher } from '../controller';
 import { createAction } from '../createAction';
 import { MetadataStorage } from '../MetadataStorage';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
-import { ActionType, Constructor, Controller, ControllerConstructor, WatchedConstructor } from '../types';
+import {
+	ActionType,
+	Constructor,
+	Controller,
+	ControllerConstructor,
+	ControllerMethodNames,
+	WatchedConstructor,
+} from '../types';
 import { extractMethodNameFromActionType } from './extractMethodNameFromActionType';
 import { InheritancePreserver } from './InheritancePreserver';
 import { makeActionType } from './makeActionType';
@@ -37,7 +44,11 @@ function watchConstructor<TController extends Controller, TConstructor extends C
 	constructor: TConstructor
 ): TConstructor {
 	const watchedConstructor = InheritancePreserver.getModifiedConstructor<WatchedConstructor<TController>>(constructor);
-	const actionTypeToMethodNameRecords = watchedConstructor[watchersSymbol];
+
+	const actionTypeToMethodNameRecords = watchedConstructor[watchersSymbol] as Record<
+		ActionType,
+		ControllerMethodNames<WatchedConstructor<TController>>
+	>;
 
 	if (actionTypeToMethodNameRecords) {
 		// add action creators to static methods of the controller

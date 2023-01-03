@@ -1,3 +1,3 @@
 export * from './ControllerBase';
 export * from './controllerMiddleware';
-export * from './Watcher';
+export * from './watcher';

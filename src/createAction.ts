@@ -1,14 +1,14 @@
 import { AppAction } from './AppAction';
 import { Action, ActionType } from './types';
 
-export function createAction<Payload>(actionType: ActionType, payload: Payload = {} as any): Action {
-	let _payload;
+export function createAction<Payload>(actionType: ActionType, payload?: Payload): Action<Payload> {
+	let normalizedPayload;
 
 	if (typeof payload === 'object' && !Array.isArray(payload)) {
-		_payload = { ...payload };
+		normalizedPayload = { ...payload };
 	} else {
-		_payload = payload;
+		normalizedPayload = payload;
 	}
 
-	return new AppAction(actionType, _payload).toPlainObject();
+	return new AppAction<Payload>(actionType, normalizedPayload).toPlainObject();
 }

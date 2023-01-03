@@ -3,7 +3,7 @@ import { Action, isAction } from './types';
 
 export const FALLBACK_ACTION_TYPE = 'No actions were passed to chain function';
 
-export function chainActions(...actions: Action[]) {
+export function chainActions(...actions: Action<any>[]) {
 	let appActions: Action[] = [];
 	if (Array.isArray(actions)) {
 		appActions = actions.filter((maybeNotAnAction) => isAction(maybeNotAnAction));

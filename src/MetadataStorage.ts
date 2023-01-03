@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Watcher } from './controller';
+import { Watcher } from './types';
 
 const IMPLICIT_WATCHER_METADATA_KEY = 'react-redux-controller controller implicit watchers';
 

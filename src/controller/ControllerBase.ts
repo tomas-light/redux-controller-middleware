@@ -8,7 +8,7 @@ const metadata = <T>(constructor: T): T => constructor;
 
 @metadata
 export class ControllerBase<State extends {} = {}> implements Controller<State> {
-	protected readonly dispatch: Dispatch<Action>;
+	protected readonly dispatch: Dispatch<Action<any>>;
 	protected readonly getState: () => State;
 
 	constructor(middleware: Middleware<State>) {

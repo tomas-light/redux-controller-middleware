@@ -1,7 +1,6 @@
 import { Container, IHaveDependencies } from 'cheap-di';
 import { Dispatch, MiddlewareAPI } from 'redux';
-import { Controller } from '../types';
-import { Watcher } from './Watcher';
+import { Controller, Watcher } from '../types';
 
 type ControllerFactory = (watcher: Watcher) => Controller;
 
