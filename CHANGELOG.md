@@ -1,5 +1,36 @@
 # Changelog
 
+### 1.4.0
+
+Features:
+* updated `WatchedController` type to be able to map changed action names in more convenient way:
+```ts
+@watch
+export class UserController extends ControllerBase<State> {
+  @watch('loadChatById') loadChatByIdFromSpecialStorage(action: Action<{ chatId: string }>) {/* ... */}
+}
+
+const typedController = (UserController as unknown) as WatchedController<UserController, {
+  loadChatByIdFromSpecialStorage: 'loadChatById', // map original method name to the new one
+}>;
+export { typedController as UserController };
+```
+* updated `Action` type, now method `addNextAction` returns action instance to be able to pass action chain right after extending in one line to the dispatch function:
+before:
+```ts
+interface Action<Payload = undefined> extends AnyAction {
+  // ...
+  addNextActions(...actions: (Action<any> | ActionFactory)[]): void;
+}
+```
+after:
+```ts
+interface Action<Payload = undefined> extends AnyAction {
+  // ...
+  addNextActions(...actions: (Action<any> | ActionFactory)[]): Action<Payload>;
+}
+```
+
 ### 1.3.0
 
 BREAKING CHANGES:

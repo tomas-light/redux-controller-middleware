@@ -1,5 +1,5 @@
 import { Action as ReduxAction } from 'redux';
-import { DiContextType } from '../../../cheap-di-react';
+import { DiContextType } from 'cheap-di-react';
 import { AppAction } from '../AppAction';
 import { createAction } from '../createAction';
 

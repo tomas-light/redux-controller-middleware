@@ -147,10 +147,10 @@ That's it!
 #### <a name="usage"></a> Custom action names
 
 You can use custom action name, like `@watch('myCustomActionName')`.
-But in this case you should change definition of such method with `DecoratedWatchedController`
+In this case you should to pass name mapper type as second argument of `WatchedController`
 
 ```ts
-import { ControllerBase, watch, DecoratedWatchedController } from '@tomas_light/react-redux-controller';
+import { ControllerBase, watch, WatchedController } from '@tomas_light/react-redux-controller';
 import { State } from "./State";
 
 @watch
@@ -158,18 +158,12 @@ export class UserController extends ControllerBase<State> {
   /* ... */
 
   @watch loadUser(action: Action<{ userID: string }>) {/* ... */}
-  @watch('loadChatInfo') loadCurrentUser(action: Action<{ chat: boolean }>) {/* ... */}
+  @watch('loadChatById') loadChatByIdFromSpecialStorage(action: Action<{ chatId: string }>) {/* ... */}
 }
 
-type Controller = 
-  // keep infered type for all actions except action with custom action type
-  Omit<WatchedController<UserController>, 'loadCurrentUser'>
-  // specify type for custom action
-  & DecoratedWatchedController<[
-    ['loadChatInfo', { userID: string; }]
-]>;
-
-const typedController = (UserController as unknown) as Controller;
+const typedController = (UserController as unknown) as WatchedController<UserController, {
+  loadChatByIdFromSpecialStorage: 'loadChatById', // map original method name to the new one
+}>;
 export { typedController as UserController };
 ```
 

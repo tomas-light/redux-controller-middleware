@@ -1,4 +1,4 @@
-import { Container, IHaveDependencies } from '../../cheap-di';
+import { Container, IHaveDependencies } from 'cheap-di';
 import { Action, ActionMaybeWithContainer, ActionFactory } from './types';
 
 export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<Payload> {
@@ -20,6 +20,7 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 
 	static addNextActions<Payload>(appAction: Action<Payload>, ...actions: (Action | ActionFactory)[]) {
 		appAction.actions.push(...actions);
+		return appAction;
 	}
 
 	static stop<Payload>(appAction: Action<Payload>): void {
@@ -41,6 +42,7 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 
 	addNextActions(...actions: (Action | ActionFactory)[]) {
 		AppAction.addNextActions(this, ...actions);
+		return this;
 	}
 
 	stop(): void {
@@ -72,7 +74,7 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 		});
 
 		plainObject.addNextActions = function (...actions: Action[]) {
-			AppAction.addNextActions(this, ...actions);
+			return AppAction.addNextActions(this, ...actions);
 		};
 		plainObject.stop = function () {
 			AppAction.stop(this);

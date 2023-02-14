@@ -18,7 +18,7 @@ export interface Action<Payload = undefined> extends AnyAction {
 	 * authorizeAction.addNextActions(loadProfileAction, loadSettingsAction);
 	 * dispatch(authorizeAction);
 	 * */
-	addNextActions(...actions: (Action<any> | ActionFactory)[]): void;
+	addNextActions(...actions: (Action<any> | ActionFactory)[]): Action<Payload>;
 
 	/** If the action has next actions in chain, this method stops them from dispatching */
 	stop(): void;
