@@ -1,6 +1,6 @@
 {
   "name": "@tomas_light/react-redux-controller",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
   "contributors": [
     "Artem Ignatev <art.ser.ignatiev@gmail.com>"
@@ -8,11 +8,14 @@
   "author": "TomasLight",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TomasLight/react-redux-controller.git"
+    "url": "https://github.com/TomasLight/react-redux-controller.git"
   },
   "homepage": "https://github.com/TomasLight/react-redux-controller#readme",
   "bugs": {
     "url": "https://github.com/TomasLight/react-redux-controller/issues"
+  },
+  "publishConfig": {
+    "@tomas_light:registry": "https://npm.pkg.github.com"
   },
   "license": "MIT",
   "scripts": {
