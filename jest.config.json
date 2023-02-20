@@ -1,4 +1,14 @@
 {
   "preset": "ts-jest",
-  "testEnvironment": "jsdom"
+  "testEnvironment": "jsdom",
+  "coverageDirectory": "<rootDir>/test-coverage",
+  "coverageReporters": ["json", "html"],
+  "collectCoverageFrom": [
+    "<rootDir>/src/**/*.{ts,tsx}"
+  ],
+  "transform": {
+    "^.+\\.tsx?$": [
+      "ts-jest"
+    ]
+  }
 }

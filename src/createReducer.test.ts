@@ -1,5 +1,5 @@
 import { AppAction } from './AppAction';
-import { Reducer } from './Reducer';
+import { createReducer } from './createReducer';
 
 class Store {
 	flag: boolean;
@@ -12,7 +12,7 @@ class Store {
 }
 
 const actionType = 'UPDATE_STORE';
-const reducer = Reducer(new Store(), actionType);
+const reducer = createReducer(new Store(), actionType);
 
 it('update store', () => {
 	const store = new Store();

@@ -1,4 +1,4 @@
-import { Reducer } from '../../Reducer';
+import { createReducer } from '../../createReducer';
 import { User } from '../types/User';
 
 export class UserStore {
@@ -13,5 +13,5 @@ export class UserStore {
 	}
 
 	static update = 'MyStore_update';
-	static reducer = Reducer(new UserStore(), UserStore.update);
+	static reducer = createReducer(new UserStore(), UserStore.update);
 }

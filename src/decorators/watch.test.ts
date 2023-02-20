@@ -1,6 +1,6 @@
 import { ControllerBase } from '../controller';
 import { createAction } from '../createAction';
-import { Reducer } from '../Reducer';
+import { createReducer } from '../createReducer';
 import { controllerWatcherSymbol, watchersSymbol } from '../symbols';
 import { Action, ControllerWithCustomActionTypes, WatchedConstructor, WatchedController } from '../types';
 import { watch } from './watch';
@@ -10,7 +10,7 @@ test('', () => {
 
 	class MyStore {
 		static update = 'My_update_store';
-		static reducer = Reducer(new MyStore(), MyStore.update);
+		static reducer = createReducer(new MyStore(), MyStore.update);
 		users: string[] = [];
 	}
 

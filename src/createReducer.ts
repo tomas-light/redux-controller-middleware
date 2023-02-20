@@ -1,7 +1,7 @@
 import { AnyAction, Reducer as ReduxReducer } from 'redux';
 import { Action, ActionType } from './types';
 
-function Reducer<TStore>(initialStore: TStore, updateActionType: ActionType) {
+export function createReducer<TStore>(initialStore: TStore, updateActionType: ActionType) {
 	return ((store: TStore = initialStore, action: Action<any>): TStore => {
 		if (action.type !== updateActionType) {
 			return store;
@@ -19,5 +19,3 @@ function Reducer<TStore>(initialStore: TStore, updateActionType: ActionType) {
 		};
 	}) as ReduxReducer<TStore, AnyAction>;
 }
-
-export { Reducer };
