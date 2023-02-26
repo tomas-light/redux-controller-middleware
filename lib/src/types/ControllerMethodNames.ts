@@ -1,4 +1,4 @@
-import { Action, ControllerConstructor, InferConstructorResult, IsString } from '../types';
+import { Action, ControllerConstructor, InferConstructorResult, IsString } from './index';
 
 export type ControllerMethodNames<
 	TConstructor extends ControllerConstructor,

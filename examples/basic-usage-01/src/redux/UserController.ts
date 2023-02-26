@@ -1,8 +1,11 @@
-import { ControllerBase } from '../../controller';
-import { createAction } from '../../createAction';
-import { watch } from '../../decorators';
-import { Middleware } from '../../Middleware';
-import { Action, WatchedController } from '../../types';
+import {
+	ControllerBase,
+	createAction,
+	watch,
+	Middleware,
+	Action,
+	WatchedController,
+} from 'redux-controller-middleware';
 import { UserApi } from '../api/UserApi';
 import { State } from '../configureRedux';
 import { UserStore } from './UserStore';

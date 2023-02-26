@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { container } from 'cheap-di';
 import { combineReducers } from 'redux';
-import { controllerMiddleware } from '../controller';
+import { controllerMiddleware } from 'redux-controller-middleware';
 import { UserStore } from './redux/UserStore';
 
 type ExtractState<ConfiguredState> = {

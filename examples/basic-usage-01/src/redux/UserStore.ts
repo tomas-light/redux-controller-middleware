@@ -1,4 +1,4 @@
-import { createReducer } from '../../createReducer';
+import { createReducer } from 'redux-controller-middleware';
 import { User } from '../types/User';
 
 export class UserStore {
