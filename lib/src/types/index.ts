@@ -6,6 +6,7 @@ export * from './Controller';
 export * from './ControllerConstructor';
 export * from './ControllerMethodNames';
 export * from './ControllerWithCustomActionTypes';
+export * from './InferState';
 export * from './isAction';
 export * from './IsString';
 export * from './StaticActionsCreator';

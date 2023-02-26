@@ -26,9 +26,9 @@ yarn add redux-controller-middleware
 
 ## <a name="how-to-use"></a> How to use
 
-Controller - is a place for a piece of logic in your application. 
-The differences from Saga (in `redux-saga`) is your methods is not static! 
-It allows you to use dependency injection technics and simplify tests. 
+Controller - is a place for a piece of logic in your application.
+The differences from Saga (in `redux-saga`) is your methods is not static!
+It allows you to use dependency injection technics and simplify tests.
 
 Create your store
 ```ts
@@ -44,62 +44,48 @@ class UserStore {
 }
 ```
 
-Register store reducer and add react-redux-controller middleware to redux. 
+Register store reducer and add redux-controller-middleware middleware to redux.
 You can also register DI container, that allows you to inject services in controllers.
 ```ts
-// configureRedux.ts
+// configureReduxStore.ts
 import { configureStore } from '@reduxjs/toolkit';
 import { container } from 'cheap-di';
 import { combineReducers } from 'redux';
-import { controllerMiddleware } from 'redux-controller-middleware';
+import { controllerMiddleware, InferState } from 'redux-controller-middleware';
 
 import { UserStore } from './User.store';
 
-export function configureRedux() {
-  const rootReducer = combineReducers({
+function makeReducers() {
+  return {
     // register our reducers
     user: UserStore.reducer,
-  });
-  
-  // infer type from reducers registration
-  type ConfiguredState = ReturnType<typeof rootReducer>;
-  type InferredState = {
-    [storeName in keyof ConfiguredState as storeName extends
-      | '[unknown]'
-      | symbol
-      | number
-      ? never
-      : storeName]: ConfiguredState[storeName];
   };
+}
 
-  const middleware = controllerMiddleware<ReturnType<typeof rootReducer>>({
+export type State = InferState<ReturnType<typeof makeReducers>>
+
+export function configureReduxStore() {
+  const rootReducer = combineReducers(makeReducers());
+
+  const middleware = controllerMiddleware<State>({
     // use cheap-di container for Dependency Injection
     container,
   });
 
-  const store = configureStore({
+  return configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
       // add react-redux-controller middleware to redux
       getDefaultMiddleware().concat([middleware]),
   });
-
-  return {
-    store,
-    // only for convenient type inference
-    stateType: null as unknown as InferredState,
-  };
 }
-
-type ConfiguredRedux = ReturnType<typeof configureRedux>;
-export type State = ConfiguredRedux['stateType'];
 ```
 
 Create a controller to encapsulate a piece of application logic.
 ```ts
 // User.controller.ts
-import { ControllerBase, createAction, watch } from 'redux-controller-middleware';
-import { State } from './configureRedux';
+import { createAction, ControllerBase, watch } from 'redux-controller-middleware';
+import { State } from './configureReduxStore';
 import { UserStore } from './User.store';
 
 // prepare the class to use static methods for creating of actions
@@ -174,7 +160,7 @@ In this case you should to pass name mapper type as second argument of `WatchedC
 
 ```ts
 import { ControllerBase, watch, WatchedController } from 'redux-controller-middleware';
-import { State } from './configureRedux';
+import { State } from './configureReduxStore';
 
 @watch
 export class UserController extends ControllerBase<State> {
@@ -237,7 +223,7 @@ const App = () => {
 // User.controller.ts
 import { ControllerBase, Middleware, watch } from 'redux-controller-middleware';
 import { UserApi, UserStorage } from './api';
-import { State } from './configureRedux';
+import { State } from './configureReduxStore';
 
 @watch
 export class UserController extends ControllerBase<State> {
@@ -347,7 +333,7 @@ import { controllerWatchers } from './controllerWatchers';
 export function configureRedux() {
   const rootReducer = combineReducers(/*...*/);
 
-  const middleware = controllerMiddleware<ReturnType<typeof rootReducer>>({
+  const middleware = controllerMiddleware<State>({
     container,
     watchers: controllerWatchers,
   });

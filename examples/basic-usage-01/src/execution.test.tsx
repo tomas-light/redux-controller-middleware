@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { render, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import { Provider, TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import { configureRedux, State } from './configureRedux';
+import { configureReduxStore, State } from './configureReduxStore';
 import { UserController } from './redux/UserController';
 
 describe('chained actions', () => {
@@ -31,7 +31,7 @@ describe('chained actions', () => {
 	};
 
 	test(`if each action is dispatched and executed`, async () => {
-		const store = configureRedux();
+		const store = configureReduxStore();
 
 		const App = () => {
 			return (

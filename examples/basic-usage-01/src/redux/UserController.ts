@@ -7,7 +7,7 @@ import {
 	WatchedController,
 } from 'redux-controller-middleware';
 import { UserApi } from '../api/UserApi';
-import { State } from '../configureRedux';
+import { State } from '../configureReduxStore';
 import { UserStore } from './UserStore';
 
 @watch

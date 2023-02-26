@@ -3202,10 +3202,10 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
-redux-controller-middleware@1.5.3:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/redux-controller-middleware/-/redux-controller-middleware-1.5.3.tgz#b0e0b2dac608d08b6bd0a29af1ba90840431fbb9"
-  integrity sha512-GRMe4b1LZEK2EoWptkDBcM9m3P7aM+0lOGTaCOb9O51WExZPWQH4V++lor/5Lcx+VEwHg+Zjyo5q+EaczLwTYA==
+redux-controller-middleware@1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/redux-controller-middleware/-/redux-controller-middleware-1.5.4.tgz#69e3ed30249ed94e61ad85f41850df42922f1b0c"
+  integrity sha512-nseVBVMJyV65c6wXz1i8peSWz/Rr1gmWHuPwocrh5zAH+En6pl1xolLzMpjNZR2m5SavyHrT90QmRvdmSHUyog==
   dependencies:
     reflect-metadata "0.1.13"
 
