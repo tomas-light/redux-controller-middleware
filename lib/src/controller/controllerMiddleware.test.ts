@@ -37,7 +37,7 @@ class _Controller extends ControllerBase<any> {
 	}
 }
 
-function makeMiddleware(calledMethods: string[]) {
+function makeMiddleware(calledMethods: string[], next: Dispatch<AnyAction>) {
 	class ControllerA extends _Controller {
 		calledMethods = calledMethods;
 		kind = 'A';
@@ -59,110 +59,92 @@ function makeMiddleware(calledMethods: string[]) {
 		[ACTIONS.actionB3]: 'method3',
 	});
 
-	return controllerMiddleware({ watchers: [watchersA, watchersB] });
+	const middleware = controllerMiddleware({ watchers: [watchersA, watchersB] });
+	const handleAction = middleware({
+		dispatch: (action: Action<any>) => handleAction(action),
+	} as any)(next);
+	return handleAction;
 }
 
-test('simple action', async () => {
+describe('simple action', () => {
 	const calledMethods: string[] = [];
 	const nextCalled: string[] = [];
 	const next = jest.fn((action: AnyAction) => {
 		nextCalled.push(action.type);
 	}) as Dispatch;
 
-	const middleware = makeMiddleware(calledMethods);
-	const handleAction = middleware({} as any)(next);
+	const handleAction = makeMiddleware(calledMethods, next);
 
-	const simpleAction = createAction(ACTIONS.actionA1);
-	await handleAction(simpleAction);
-	expect(nextCalled.length).toBe(1);
-	expect(nextCalled[0]).toBe(ACTIONS.actionA1);
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+	});
 
-	expect(calledMethods.length).toBe(1);
-	expect(calledMethods[0]).toBe('A1');
+	test('if "next" was called one time', async () => {
+		const simpleAction = createAction(ACTIONS.actionA1);
+		await handleAction(simpleAction);
+		expect(nextCalled.length).toBe(1);
+	});
+	test('if "next" was called with correct action', async () => {
+		const simpleAction = createAction(ACTIONS.actionA1);
+		await handleAction(simpleAction);
+		expect(nextCalled[0]).toBe(ACTIONS.actionA1);
+	});
+
+	test('if one method of the controller was called', async () => {
+		const simpleAction = createAction(ACTIONS.actionA1);
+		await handleAction(simpleAction);
+		expect(calledMethods.length).toBe(1);
+	});
+	test('if method of the controller was called with the passed action', async () => {
+		const simpleAction = createAction(ACTIONS.actionA1);
+		await handleAction(simpleAction);
+		expect(calledMethods[0]).toBe('A1');
+	});
 });
 
-test('2 simple actions', async () => {
+describe('2 simple actions', () => {
 	const calledMethods: string[] = [];
 	const nextCalled: string[] = [];
 	const next = jest.fn((action: Action) => {
 		nextCalled.push(action.type);
 	}) as Dispatch;
 
-	const middleware = makeMiddleware(calledMethods);
-	const handleAction = middleware({} as any)(next);
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+	});
 
-	const simpleAction1 = createAction(ACTIONS.actionA1);
-	const simpleAction2 = createAction(ACTIONS.actionB1);
-	await Promise.all([handleAction(simpleAction1), handleAction(simpleAction2)]);
+	const handleAction = makeMiddleware(calledMethods, next);
 
-	expect(nextCalled.length).toBe(2);
-	expect(nextCalled[0]).toBe(ACTIONS.actionA1);
-	expect(nextCalled[1]).toBe(ACTIONS.actionB1);
+	test('if "next" was called two times', async () => {
+		const simpleAction1 = createAction(ACTIONS.actionA1);
+		const simpleAction2 = createAction(ACTIONS.actionB1);
+		await Promise.all([handleAction(simpleAction1), handleAction(simpleAction2)]);
+		expect(nextCalled.length).toBe(2);
+	});
+	test('if "next" was called with correct action', async () => {
+		const simpleAction1 = createAction(ACTIONS.actionA1);
+		const simpleAction2 = createAction(ACTIONS.actionB1);
+		await Promise.all([handleAction(simpleAction1), handleAction(simpleAction2)]);
+		expect(nextCalled).toEqual([ACTIONS.actionA1, ACTIONS.actionB1]);
+	});
 
-	expect(calledMethods.length).toBe(2);
-	expect(calledMethods[0]).toBe('A1');
-	expect(calledMethods[1]).toBe('B1');
+	test('if two methods of the controller were called', async () => {
+		const simpleAction1 = createAction(ACTIONS.actionA1);
+		const simpleAction2 = createAction(ACTIONS.actionB1);
+		await Promise.all([handleAction(simpleAction1), handleAction(simpleAction2)]);
+		expect(calledMethods.length).toBe(2);
+	});
+	test('if methods of the controller were called with the passed action', async () => {
+		const simpleAction1 = createAction(ACTIONS.actionA1);
+		const simpleAction2 = createAction(ACTIONS.actionB1);
+		await Promise.all([handleAction(simpleAction1), handleAction(simpleAction2)]);
+		expect(calledMethods).toEqual(['A1', 'B1']);
+	});
 });
 
-test('3 consistent actions', async () => {
-	const calledMethods: string[] = [];
-
-	const nextCalled: string[] = [];
-	const next = jest.fn((action: Action) => {
-		nextCalled.push(action.type);
-	}) as Dispatch;
-
-	const middleware = makeMiddleware(calledMethods);
-	const handleAction = middleware({} as any)(next);
-
-	const action = createAction(ACTIONS.actionA1);
-	action.addNextActions(
-		//
-		createAction(ACTIONS.actionA2),
-		() => createAction(ACTIONS.actionB1)
-	);
-
-	await handleAction(action);
-	expect(calledMethods).toStrictEqual([
-		//
-		'A1',
-		'A2',
-		'B1',
-	]);
-
-	expect(nextCalled.length).toBe(1);
-});
-
-test('3 consistent actions with promises', async () => {
-	const calledMethods: string[] = [];
-
-	const nextCalled: string[] = [];
-	const next = jest.fn((action: Action) => {
-		nextCalled.push(action.type);
-	}) as Dispatch;
-
-	const middleware = makeMiddleware(calledMethods);
-	const handleAction = middleware({} as any)(next);
-
-	const action = createAction(ACTIONS.actionA1);
-	action.addNextActions(
-		//
-		() => createAction(ACTIONS.actionA3),
-		createAction(ACTIONS.actionA2)
-	);
-
-	await handleAction(action);
-	expect(calledMethods).toStrictEqual([
-		//
-		'A1',
-		'A3',
-		'A2',
-	]);
-
-	expect(nextCalled.length).toBe(1);
-});
-
-test('5 consistent actions with promises and stop propagation', async () => {
+describe('3 consistent actions', () => {
 	const calledMethods: string[] = [];
 
 	const nextCalled: string[] = [];
@@ -170,61 +152,214 @@ test('5 consistent actions with promises and stop propagation', async () => {
 		nextCalled.push(action.type);
 	}) as Dispatch;
 
-	const middleware = makeMiddleware(calledMethods);
-	const handleAction = middleware({} as any)(next);
+	const handleAction = makeMiddleware(calledMethods, next);
 
-	const action = createAction(ACTIONS.actionA1);
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+	});
 
-	const bAction = createAction(ACTIONS.actionB1);
-	bAction.stop();
-	bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
+	function prepareAction() {
+		const action = createAction(ACTIONS.actionA1);
+		action.addNextActions(
+			//
+			createAction(ACTIONS.actionA2),
+			() => createAction(ACTIONS.actionB1)
+		);
 
-	action.addNextActions(createAction(ACTIONS.actionA2), bAction, () => createAction(ACTIONS.actionA3));
+		return action;
+	}
 
-	await handleAction(action);
-	expect(calledMethods).toStrictEqual([
-		//
-		'A1',
-		'A2',
-		'B1',
-		'A3',
-	]);
+	test('if "next" was called one time', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled.length).toBe(3);
+	});
+	test('if "next" was called with correct action', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled).toEqual([ACTIONS.actionA1, ACTIONS.actionA2, ACTIONS.actionB1]);
+	});
 
-	expect(nextCalled.length).toBe(1);
+	test('if three methods of the controller were called', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(calledMethods.length).toBe(3);
+	});
+	test('if methods of the controller were called with the passed action', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(calledMethods).toStrictEqual([
+			//
+			'A1',
+			'A2',
+			'B1',
+		]);
+	});
 });
 
-// describe('check of asynchronous controller methods execution', () => {
-// 	class Controller extends ControllerBase<any> {
-// 		action1(action: Action<{ callback: () => void }>) {
-// 			action.payload.callback();
-// 		}
-// 	}
-//
-// 	const actionType = 'action type 1';
-//
-// 	const watchers = watcher<keyof Controller>(Controller, [[actionType, 'action1']]);
-//
-// 	const middleware = controllerMiddleware({ watchers: [watchers] });
-// 	const next = (action: any) => ({} as any);
-// 	const handleAction = middleware({} as any)(next);
-//
-// 	test('controller method execution is asynchronous, so it modify array after all', async () => {
-// 		const array = ['initial string'];
-//
-// 		const action = createAction<{ callback: () => void }>(actionType, {
-// 			callback: () => {
-// 				array.push('string from the controller method');
-// 			},
-// 		});
-//
-// 		await handleAction(action);
-//
-// 		array.push('string after action dispatched');
-//
-// 		expect(array).toStrictEqual([
-// 			'initial string',
-// 			'string from the controller method',
-// 			'string after action dispatched',
-// 		]);
-// 	});
-// });
+describe('5 consistent actions with promises and stop propagation', () => {
+	const calledMethods: string[] = [];
+
+	const nextCalled: string[] = [];
+	const next = jest.fn((action: Action) => {
+		nextCalled.push(action.type);
+	}) as Dispatch;
+
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+	});
+
+	const handleAction = makeMiddleware(calledMethods, next);
+
+	function prepareAction() {
+		const action = createAction(ACTIONS.actionA1);
+
+		const bAction = createAction(ACTIONS.actionB1);
+		bAction.stop();
+		bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
+
+		action.addNextActions(
+			//
+			createAction(ACTIONS.actionA2),
+			bAction,
+			() => createAction(ACTIONS.actionA3)
+		);
+
+		return action;
+	}
+
+	test('if "next" was called one time', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled.length).toBe(3);
+	});
+	test('if "next" was called with correct action', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled).toEqual([ACTIONS.actionA1, ACTIONS.actionA2, ACTIONS.actionB1]);
+	});
+
+	test('if methods of the controller were called with the passed action', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(calledMethods).toStrictEqual([
+			//
+			'A1',
+			'A2',
+			'B1',
+		]);
+	});
+});
+
+describe('many actions with nesting', () => {
+	const calledMethods: string[] = [];
+
+	const nextCalled: string[] = [];
+	const next = jest.fn((action: Action) => {
+		nextCalled.push(action.type);
+	}) as Dispatch;
+
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+	});
+
+	const handleAction = makeMiddleware(calledMethods, next);
+
+	function prepareAction() {
+		const action = createAction(ACTIONS.actionA1);
+		const bAction = createAction(ACTIONS.actionB1);
+		bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
+
+		action.addNextActions(
+			//
+			createAction(ACTIONS.actionA2),
+			bAction,
+			() => createAction(ACTIONS.actionA3)
+		);
+
+		return action;
+	}
+
+	test('if "next" was called three times', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled.length).toBe(6);
+	});
+
+	test('if order of called methods is correct', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(calledMethods).toStrictEqual([
+			//
+			'A1',
+			'A2',
+			'B1',
+			'B2',
+			'B3',
+			'A3',
+		]);
+	});
+});
+
+describe('many actions with callbacks', () => {
+	const calledMethods: string[] = [];
+
+	const nextCalled: string[] = [];
+	const next = jest.fn((action: Action) => {
+		nextCalled.push(action.type);
+	}) as Dispatch;
+
+	let mockFn1 = jest.fn();
+	let mockFn2 = jest.fn();
+
+	beforeEach(() => {
+		calledMethods.splice(0, calledMethods.length);
+		nextCalled.splice(0, nextCalled.length);
+		mockFn1.mockClear();
+		mockFn2.mockClear();
+	});
+
+	const handleAction = makeMiddleware(calledMethods, next);
+
+	function prepareAction() {
+		const action = createAction(ACTIONS.actionA1);
+
+		action.addNextActions(
+			//
+			createAction(ACTIONS.actionA2),
+			mockFn1,
+			() => createAction(ACTIONS.actionA3),
+			mockFn2
+		);
+
+		return action;
+	}
+
+	test('if "next" was called three times', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(nextCalled.length).toBe(3);
+	});
+
+	test('if order of called methods is correct', async () => {
+		const action = prepareAction();
+		await handleAction(action);
+		expect(calledMethods).toStrictEqual(['A1', 'A2', 'A3']);
+	});
+
+	describe('if callbacks were called', () => {
+		test('if first callback was called one time', async () => {
+			const action = prepareAction();
+			await handleAction(action);
+			expect(mockFn1).toBeCalledTimes(1);
+		});
+		test('if second callback was called one time', async () => {
+			const action = prepareAction();
+			await handleAction(action);
+			expect(mockFn2).toBeCalledTimes(1);
+		});
+	});
+});

@@ -4,7 +4,7 @@ export interface Action<Payload = undefined> extends AnyAction {
 	payload: Payload;
 
 	/** next actions chain (actions that will be dispatched after handling of this one) */
-	readonly actions: (Action | ActionFactory)[];
+	readonly actions: (Action<any> | ActionFactory)[];
 
 	/** is action chain stopped or not */
 	readonly stopPropagation: boolean;
@@ -18,13 +18,19 @@ export interface Action<Payload = undefined> extends AnyAction {
 	 * authorizeAction.addNextActions(loadProfileAction, loadSettingsAction);
 	 * dispatch(authorizeAction);
 	 * */
-	addNextActions(...actions: (Action<any> | ActionFactory)[]): Action<Payload>;
+	addNextActions(...actions: Action['actions']): Action<Payload>;
 
 	/** If the action has next actions in chain, this method stops them from dispatching */
 	stop(): void;
 
 	/** returns `next actions chain of this action */
-	getActions(): ActionFactory[];
+	// getActions(): Action['actions'];
+
+	/** if action has next actions, the middleware will add promise resolving
+	 * to this property, that will be triggered after all next action will be handled.
+	 * It is signal for the middleware: this action was handled, and we can take
+	 * next action in a chain */
+	handled?: () => void;
 }
 
-export type ActionFactory = () => Action<any>;
+export type ActionFactory = () => Action<any> | void;

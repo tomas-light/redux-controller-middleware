@@ -278,12 +278,18 @@ const UserList = () => {
     const action = chainActions(
       UserController.loadProfile({ userID: '123' }),
       UserController.openUserPage({ userID: '123' }),
+      () => {
+        // my callback to do anything else after ation are executed
+      },
       // ... any other
     );
     // same as
     const action = UserController.loadProfile({ userID: '123' });
     action.addNextActions(
       UserController.openUserPage({ userID: '123' }),
+      () => {
+        // my callback to do anything else after ation are executed
+      },
       // ... any other
     );
 

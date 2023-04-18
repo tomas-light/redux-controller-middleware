@@ -1,9 +1,9 @@
 import { Container, IHaveDependencies } from 'cheap-di';
 import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
+import { AppAction } from '../AppAction';
 import { MetadataStorage } from '../MetadataStorage';
 import { Middleware } from '../Middleware';
-import { Action, ActionFactory, ActionMaybeWithContainer, isAction, Watcher } from '../types';
-import { isDuckPromise } from './isDuckPromise';
+import { Action, ActionMaybeWithContainer, isAction, Watcher } from '../types';
 import { makeControllerFactory } from './makeControllerFactory';
 import { tryToFindDependencyContainer } from './tryToFindDependencyContainer';
 
@@ -13,102 +13,102 @@ type MiddlewareOptions = {
 };
 
 function controllerMiddleware<State>(options: MiddlewareOptions = {}): ReduxMiddleware<Dispatch, State> {
-	const { watchers = [], getContainer } = options;
-
 	return (middlewareAPI: MiddlewareAPI<Dispatch, State>) => {
 		return (next: (action: ActionMaybeWithContainer) => void) => {
 			return async (action: ActionMaybeWithContainer) => {
-				const container = tryToFindDependencyContainer(action, getContainer);
-				if (container) {
-					container.registerInstance(middlewareAPI).as(Middleware);
-				}
-
-				if (!isAction(action)) {
-					return;
-				}
-
-				const controllerFactory = makeControllerFactory(middlewareAPI, container);
-				const generator = controllerGenerator(watchers, controllerFactory, action);
-
-				let iterator: IteratorResult<Promise<any>>;
-				do {
-					iterator = generator.next();
-					if (!iterator.done) {
-						try {
-							await iterator.value;
-						} catch (error) {
-							console.error('Unhandled exception in controller', error);
-						}
-					}
-				} while (!iterator.done);
-
-				next(action);
+				await handleAction({ ...options, middlewareAPI, action, next });
 			};
 		};
 	};
 }
 
-function controllerGenerator(
-	watchers: Watcher[],
-	controllerFactory: (watcher: Watcher) => any,
-	initAction: Action
-): IterableIterator<Promise<any>> {
-	let actionCursor = 0;
-	const actions: ActionFactory[] = [() => initAction];
+async function handleAction<State>(
+	params: MiddlewareOptions & {
+		middlewareAPI: MiddlewareAPI<Dispatch, State>;
+		next: (action: ActionMaybeWithContainer) => void;
+		action: ActionMaybeWithContainer;
+	}
+) {
+	const { watchers = [], getContainer, middlewareAPI, action, next } = params;
 
-	function iterator(): IteratorResult<Promise<any>> {
-		if (actionCursor >= actions.length) {
-			return {
-				value: undefined,
-				done: true,
-			};
-		}
-
-		const action = actions[actionCursor]();
-		const promises: Promise<void>[] = [];
-
-		const implicitWatchers = MetadataStorage.getImplicitWatchers();
-		const allWatchers = watchers.concat(implicitWatchers);
-
-		allWatchers.forEach((watcher) => {
-			const actionName = watcher.get(action.type);
-			if (actionName) {
-				const controller = controllerFactory(watcher);
-				const promise = new Promise<void>((resolve) => {
-					setTimeout(() => {
-						const maybePromise = controller[actionName](action);
-						if (isDuckPromise(maybePromise)) {
-							maybePromise.then(resolve);
-						} else {
-							resolve();
-						}
-					});
-				});
-
-				promises.push(promise);
-			}
-		});
-
-		actionCursor++;
-
-		return {
-			value: Promise.all(promises).then(() => {
-				if (isAction(action) && !action.stopPropagation) {
-					actions.splice(actionCursor, 0, ...action.getActions());
-				}
-			}),
-			done: false,
-		};
+	// we process only actions created with the redux-controller-middleware
+	if (!isAction(action)) {
+		next(action);
+		return;
 	}
 
-	return {
-		[Symbol.iterator](): IterableIterator<any> {
-			return this;
-		},
-		next(): IteratorResult<Promise<any>> {
-			return iterator();
-		},
-	};
+	const container = tryToFindDependencyContainer(action, getContainer);
+	if (container) {
+		container.registerInstance(middlewareAPI).as(Middleware);
+	}
+
+	const controllerFactory = makeControllerFactory(middlewareAPI, container);
+	const implicitWatchers = MetadataStorage.getImplicitWatchers();
+	const allWatchers = watchers.concat(implicitWatchers);
+
+	for await (const watcher of allWatchers) {
+		const actionName = watcher.get(action.type);
+		if (!actionName) {
+			continue;
+		}
+
+		const controller = controllerFactory(watcher);
+		const actionHandler = controller[actionName as keyof typeof controller];
+		if (typeof actionHandler === 'function') {
+			try {
+				await (actionHandler as (action: Action) => any).call(controller, action);
+			} catch (error) {
+				console.error('Unhandled exception in controller', error);
+				// if there is something went wrong, we cannot proceed as normal,
+				// because some user flow may be broken
+				break;
+			}
+		}
+	}
+
+	next(action);
+
+	if (action.stopPropagation) {
+		action.handled?.();
+		return;
+	}
+
+	const nextActions = [...AppAction.getActions(action)];
+
+	while (nextActions.length) {
+		const nextActionOrFactory = nextActions.shift();
+		let nextAction: Action | void;
+
+		if (typeof nextActionOrFactory === 'function') {
+			try {
+				// callback or action factory
+				nextAction = nextActionOrFactory();
+			} catch (error) {
+				console.error('Unhandled exception in callback or action factory', error);
+				// if there is something went wrong, we cannot proceed as normal,
+				// because some user flow may be broken
+				break;
+			}
+		} else {
+			nextAction = nextActionOrFactory;
+		}
+
+		if (!isAction(nextAction)) {
+			// if it was just callback, no need additional processing
+			continue;
+		}
+
+		await new Promise<void>((resolve) => {
+			(nextAction as Action).handled = resolve;
+			middlewareAPI.dispatch(nextAction as Action);
+		});
+
+		if (nextAction.stopPropagation) {
+			break;
+		}
+	}
+
+	action.handled?.();
 }
 
 export type { MiddlewareOptions };

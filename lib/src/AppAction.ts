@@ -18,7 +18,7 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 		this.stopPropagation = false;
 	}
 
-	static addNextActions<Payload>(appAction: Action<Payload>, ...actions: (Action | ActionFactory)[]) {
+	static addNextActions<Payload>(appAction: Action<Payload>, ...actions: Action['actions']) {
 		appAction.actions.push(...actions);
 		return appAction;
 	}
@@ -27,17 +27,12 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 		(appAction as AppAction<Payload>).stopPropagation = true;
 	}
 
-	static getActions<Payload>(appAction: Action<Payload>): ActionFactory[] {
+	static getActions<Payload>(appAction: Action<Payload>): Action['actions'] {
 		if (!Array.isArray(appAction.actions)) {
 			return [];
 		}
 
-		return appAction.actions.map((actionOrFactory) => {
-			if (typeof actionOrFactory === 'function') {
-				return actionOrFactory;
-			}
-			return () => actionOrFactory;
-		});
+		return appAction.actions;
 	}
 
 	addNextActions(...actions: (Action | ActionFactory)[]) {
@@ -49,9 +44,9 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
 		AppAction.stop(this);
 	}
 
-	getActions(): ActionFactory[] {
-		return AppAction.getActions(this);
-	}
+	// getActions(): ActionFactory[] {
+	// 	return AppAction.getActions(this);
+	// }
 
 	toPlainObject(): Action<Payload> {
 		const keys = Object.keys(this) as (keyof AppAction<Payload>)[];

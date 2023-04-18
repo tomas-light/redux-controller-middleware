@@ -1,26 +1,25 @@
 import { createAction } from './createAction';
-import { Action, isAction } from './types';
+import { Action, ActionFactory, isAction } from './types';
 
+export const FIRST_ACTION_IN_CHAIN_TYPE = 'Action chain start';
 export const FALLBACK_ACTION_TYPE = 'No actions were passed to chain function';
 
-export function chainActions(...actions: Action<any>[]) {
-	let appActions: Action[] = [];
-	if (Array.isArray(actions)) {
-		appActions = actions.filter((maybeNotAnAction) => isAction(maybeNotAnAction));
-	}
+export function chainActions(...actions: (Action<any> | ActionFactory)[]) {
+	const filteredActions = actions.filter(
+		(actionOrFactoryOrInvalid) => typeof actionOrFactoryOrInvalid === 'function' || isAction(actionOrFactoryOrInvalid)
+	);
 
-	if (!appActions.length) {
+	if (!filteredActions.length) {
 		return createAction(FALLBACK_ACTION_TYPE);
 	}
 
-	const firstAction = appActions[0];
-	let action = firstAction;
-
-	for (let actionIndex = 1; actionIndex < appActions.length; actionIndex++) {
-		const nextAction = appActions[actionIndex];
-		action.addNextActions(nextAction);
-		action = nextAction;
+	const [firstAction, ...restActions] = filteredActions;
+	if (isAction(firstAction)) {
+		return firstAction.addNextActions(...restActions);
 	}
 
-	return firstAction;
+	let action = createAction(FIRST_ACTION_IN_CHAIN_TYPE);
+	action.addNextActions(...filteredActions);
+
+	return action;
 }

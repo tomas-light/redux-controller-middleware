@@ -2,6 +2,8 @@ import { Action } from './Action';
 
 export function isAction(action: any): action is Action {
 	return (
+		action &&
+		typeof action === 'object' &&
 		'payload' in action &&
 		'actions' in action &&
 		'stopPropagation' in action &&
