@@ -7,12 +7,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lib
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: npm ci
-      - run: npm test
+      - run: npm i yarn
+      - run: yarn
+      - run: yarn test
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
