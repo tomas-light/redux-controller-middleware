@@ -312,14 +312,26 @@ describe('many actions with callbacks', () => {
 		nextCalled.push(action.type);
 	}) as Dispatch;
 
-	let mockFn1 = jest.fn();
-	let mockFn2 = jest.fn();
+	const mockFn1 = jest.fn(() => {
+		calledMethods.push('mock fn 1');
+	});
+	const mockFn2 = jest.fn(() => {
+		calledMethods.push('mock fn 2');
+	});
+	const mockAsyncFn = jest.fn(async () => {
+		calledMethods.push('mock async fn is called');
+		await new Promise<void>((resolve) => {
+			setTimeout(resolve, 50);
+		});
+		calledMethods.push('mock async fn has done');
+	});
 
 	beforeEach(() => {
 		calledMethods.splice(0, calledMethods.length);
 		nextCalled.splice(0, nextCalled.length);
 		mockFn1.mockClear();
 		mockFn2.mockClear();
+		mockAsyncFn.mockClear();
 	});
 
 	const handleAction = makeMiddleware(calledMethods, next);
@@ -331,6 +343,7 @@ describe('many actions with callbacks', () => {
 			//
 			createAction(ACTIONS.actionA2),
 			mockFn1,
+			mockAsyncFn,
 			() => createAction(ACTIONS.actionA3),
 			mockFn2
 		);
@@ -347,19 +360,14 @@ describe('many actions with callbacks', () => {
 	test('if order of called methods is correct', async () => {
 		const action = prepareAction();
 		await handleAction(action);
-		expect(calledMethods).toStrictEqual(['A1', 'A2', 'A3']);
-	});
-
-	describe('if callbacks were called', () => {
-		test('if first callback was called one time', async () => {
-			const action = prepareAction();
-			await handleAction(action);
-			expect(mockFn1).toBeCalledTimes(1);
-		});
-		test('if second callback was called one time', async () => {
-			const action = prepareAction();
-			await handleAction(action);
-			expect(mockFn2).toBeCalledTimes(1);
-		});
+		expect(calledMethods).toStrictEqual([
+			'A1',
+			'A2',
+			'mock fn 1',
+			'mock async fn is called',
+			'mock async fn has done',
+			'A3',
+			'mock fn 2',
+		]);
 	});
 });

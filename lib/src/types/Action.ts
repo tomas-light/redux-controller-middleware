@@ -33,4 +33,4 @@ export interface Action<Payload = undefined> extends AnyAction {
 	handled?: () => void;
 }
 
-export type ActionFactory = () => Action<any> | void;
+export type ActionFactory = () => Action<any> | void | Promise<void>;

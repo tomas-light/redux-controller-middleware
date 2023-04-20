@@ -82,7 +82,7 @@ async function handleAction<State>(
 		if (typeof nextActionOrFactory === 'function') {
 			try {
 				// callback or action factory
-				nextAction = nextActionOrFactory();
+				nextAction = await nextActionOrFactory();
 			} catch (error) {
 				console.error('Unhandled exception in callback or action factory', error);
 				// if there is something went wrong, we cannot proceed as normal,
