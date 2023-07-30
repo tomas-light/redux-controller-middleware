@@ -1,6 +1,6 @@
 {
   "name": "redux-controller-middleware",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
   "contributors": [
     "Artem Ignatev <art.ser.ignatiev@gmail.com>"
