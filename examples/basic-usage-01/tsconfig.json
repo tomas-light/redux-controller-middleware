@@ -2,11 +2,9 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "declaration": true,
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
     "jsx": "react-jsx",
+    "lib": ["es2022", "esnext.decorators", "dom"],
     "module": "ESNext",
     "moduleResolution": "node",
     "noErrorTruncation": true,
@@ -15,7 +13,7 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es6"
+    "target": "ES2022"
   },
   "include": [
     "src"

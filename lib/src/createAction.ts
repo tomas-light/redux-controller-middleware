@@ -2,13 +2,13 @@ import { AppAction } from './AppAction';
 import { Action, ActionType } from './types';
 
 export function createAction<Payload>(actionType: ActionType, payload?: Payload): Action<Payload> {
-	let normalizedPayload;
+  let normalizedPayload;
 
-	if (typeof payload === 'object' && !Array.isArray(payload)) {
-		normalizedPayload = { ...payload };
-	} else {
-		normalizedPayload = payload;
-	}
+  if (typeof payload === 'object' && !Array.isArray(payload)) {
+    normalizedPayload = { ...payload };
+  } else {
+    normalizedPayload = payload;
+  }
 
-	return new AppAction<Payload>(actionType, normalizedPayload).toPlainObject();
+  return new AppAction<Payload>(actionType, normalizedPayload).toPlainObject();
 }
