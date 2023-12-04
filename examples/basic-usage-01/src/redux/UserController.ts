@@ -5,6 +5,7 @@ import {
   Middleware,
   Action,
   WatchedController,
+  updateStoreSlice,
 } from 'redux-controller-middleware';
 import { UserApi } from '../api/UserApi';
 import { State } from '../configureReduxStore';
@@ -19,21 +20,21 @@ class UserController extends ControllerBase<State> {
     super(middleware);
   }
 
-  private updateStore(partialStore: Partial<UserStore>) {
-    this.dispatch(createAction(UserStore.update, partialStore));
-  }
-
   @watch
   async loadUsers() {
-    this.updateStore({
-      usersAreLoading: true,
-    });
+    this.dispatch(
+      updateStoreSlice(UserStore)({
+        usersAreLoading: true,
+      })
+    );
 
     const response = await this.usersApi.getUsers();
     if (!response.ok) {
-      this.updateStore({
-        usersAreLoading: false,
-      });
+      this.dispatch(
+        updateStoreSlice(UserStore)({
+          usersAreLoading: false,
+        })
+      );
       // call action creator of the controller from itself
       this.dispatch(userController.showErrorToast({ error: 'Oops! Something went wrong...' }));
       return;
@@ -46,10 +47,12 @@ class UserController extends ControllerBase<State> {
       updatedUsers.set(user.userId, user);
     });
 
-    this.updateStore({
-      users: updatedUsers,
-      usersAreLoading: false,
-    });
+    this.dispatch(
+      updateStoreSlice(UserStore)({
+        users: updatedUsers,
+        usersAreLoading: false,
+      })
+    );
   }
 
   @watch
@@ -59,9 +62,11 @@ class UserController extends ControllerBase<State> {
 
     const user = users.get(userId);
     if (user) {
-      this.updateStore({
-        openedUser: user,
-      });
+      this.dispatch(
+        updateStoreSlice(UserStore)({
+          openedUser: user,
+        })
+      );
     }
   }
 

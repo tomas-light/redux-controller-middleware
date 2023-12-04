@@ -46,12 +46,12 @@ async function handleAction<State>(
     container.registerInstance(middlewareAPI).as(Middleware);
   }
 
-  const controllerData = actionToControllerMap.get(action.type);
-  if (controllerData) {
+  const actionReducer = actionToControllerMap.get(action.type);
+  if (actionReducer) {
     await callActionReducer({
       middlewareAPI,
       container,
-      controllerData,
+      actionReducer,
       action,
     });
   }

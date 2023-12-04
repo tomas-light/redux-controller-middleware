@@ -1,21 +1,20 @@
-import { AnyAction, Reducer as ReduxReducer } from 'redux';
-import { Action, ActionType } from './types';
+import { ActionReducerParameters, actionToControllerMap } from './constants';
+import { createAction } from './createAction';
+import { makeActionType } from './decorators/makeActionType';
+import { Action } from './types';
 
-export function createReducer<TStore>(initialStore: TStore, updateActionType: ActionType) {
-  return ((store: TStore = initialStore, action: Action<any>): TStore => {
-    if (action.type !== updateActionType) {
-      return store;
-    }
+type InferActionFactory<Payload> = unknown extends Payload ? () => Action : (payload: Payload) => Action<Payload>;
 
-    if (typeof action.payload === 'object') {
-      return {
-        ...store,
-        ...action.payload,
-      };
-    }
+export function createReducer<Payload>(
+  actionName: string,
+  reducer: (parameters: ActionReducerParameters<Payload>) => any
+): InferActionFactory<Payload> {
+  const actionType = makeActionType({
+    methodName: actionName,
+    uniqueSalt: new Date().valueOf().toString(),
+  });
 
-    return {
-      ...store,
-    };
-  }) as ReduxReducer<TStore, AnyAction>;
+  actionToControllerMap.set(actionType, reducer);
+
+  return ((payload: unknown) => createAction(actionType, payload)) as InferActionFactory<Payload>;
 }

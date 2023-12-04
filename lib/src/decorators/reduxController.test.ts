@@ -101,7 +101,7 @@ describe('[function] reduxController', () => {
         @reducer
         action1() {}
         @reducer
-        action2 = (a: string) => {};
+        action2 = () => {};
         @reducer
         action3(action: Action<string>) {}
       }
@@ -110,7 +110,7 @@ describe('[function] reduxController', () => {
         @reducer
         async baction1() {}
         @reducer
-        baction2 = (action: Action) => {};
+        baction2 = (action: Action<number>) => {};
         @reducer
         baction3() {}
       }

@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { container } from 'cheap-di';
 import { combineReducers } from 'redux';
-import { controllerMiddleware, InferState } from 'redux-controller-middleware';
+import { controllerMiddleware, getReducersFromStoreSlices, InferState } from 'redux-controller-middleware';
 import { UserStore } from './redux/UserStore';
 
 function makeReducers() {
-  return {
-    users: UserStore.reducer,
-  };
+  return getReducersFromStoreSlices({
+    users: UserStore,
+  });
 }
 
 export type State = InferState<ReturnType<typeof makeReducers>>;

@@ -1,14 +1,24 @@
-import { Constructor } from './types';
+import { Dispatch, MiddlewareAPI } from 'redux';
+import { Action, Constructor } from './types';
+
+export type ControllerMethodMap = Map<
+  Constructor, // controller ref
+  string // method name
+>;
+
+export type ActionReducerParameters<Payload, State = unknown> = MiddlewareAPI<Dispatch, State> & {
+  action?: Action<Payload>;
+};
+export type ActionReducer<Payload, State> = (parameters: ActionReducerParameters<Payload, State>) => any;
+
+export type ActionReducerOrControllerMethod<Payload = undefined, State = unknown> =
+  | ControllerMethodMap
+  | ActionReducer<Payload, State>;
 
 export const actionToControllerMap = new Map<
   string, // action type
-  ControllerInfo
+  ActionReducerOrControllerMethod<any, any>
 >();
-
-export interface ControllerInfo {
-  controllerConstructor: Constructor;
-  methodName: string;
-}
 
 // todo: use context.metadata for passing method names from method-decorator, when it will be ready
 export const methodNamesTemporaryBox = [] as string[];

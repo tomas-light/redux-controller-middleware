@@ -12,7 +12,7 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es6"
+    "target": "es2022"
   },
   "include": [
     "src"

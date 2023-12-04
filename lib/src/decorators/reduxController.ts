@@ -1,4 +1,4 @@
-import { actionToControllerMap, methodNamesTemporaryBox } from '../constants';
+import { actionToControllerMap, ControllerMethodMap, methodNamesTemporaryBox } from '../constants';
 import { createAction } from '../createAction';
 import { Constructor, Controller, ControllerConstructor } from '../types';
 import { makeActionType } from './makeActionType';
@@ -70,10 +70,20 @@ function getWatchedMethodNames(context: ClassDecoratorContext) {
 function registerControllerMethod(parameters: { constructor: Constructor; methodName: string; actionType: string }) {
   const { constructor, actionType, methodName } = parameters;
 
-  actionToControllerMap.set(actionType, {
-    controllerConstructor: constructor,
-    methodName,
-  });
+  let actionControllers = actionToControllerMap.get(actionType);
+  if (!actionControllers) {
+    actionControllers = new Map();
+    actionToControllerMap.set(actionType, actionControllers);
+  }
+
+  if (typeof actionControllers === 'function') {
+    // action reducers have to has unique action type for them, so collisions with controllers should not happens
+    throw new Error(
+      'There is already registered action reducer for this action type. Probably, it is a bug in redux-controller-middleware. Please report it to our Issues on Github.'
+    );
+  }
+
+  actionControllers.set(constructor, methodName);
 }
 
 function addActionCreatorAsStaticMethod(constructor: Constructor, actionType: string, methodName: string) {

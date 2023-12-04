@@ -1,6 +1,7 @@
-import { createReducer } from 'redux-controller-middleware';
+import { storeSlice } from 'redux-controller-middleware';
 import { User } from '../types/User';
 
+@storeSlice
 export class UserStore {
   users: Map<User['userId'], User>;
   openedUser: User | null;
@@ -11,7 +12,4 @@ export class UserStore {
     this.openedUser = null;
     this.usersAreLoading = false;
   }
-
-  static update = 'MyStore_update';
-  static reducer = createReducer(new UserStore(), UserStore.update);
 }

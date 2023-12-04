@@ -2,15 +2,15 @@ import { methodNamesTemporaryBox } from '../constants';
 import { Action } from '../types';
 
 export interface ReducerDecorator {
-  <TPayload, TContext extends ClassFieldDecoratorContext>(
-    arrowFunction: undefined | ((action?: Action<TPayload>) => any),
-    fieldContext: TContext
+  <This, TPayload, Args extends Action<TPayload>[], Return>(
+    target: undefined, // is it always undefined for field decorators ?
+    fieldContext: ClassFieldDecoratorContext<This, (this: This, ...args: Args) => Return>
   ): void;
 
-  <TPayload, TMethod extends (action?: Action<TPayload>) => any, TContext extends ClassMethodDecoratorContext>(
-    method: TMethod,
-    methodContext: TContext
-  ): TMethod;
+  <This, TPayload, Args extends Action<TPayload>[], Return>(
+    method: (this: This, ...args: Args) => Return,
+    methodContext: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>
+  ): (this: This, ...args: Args) => Return;
 }
 
 /**

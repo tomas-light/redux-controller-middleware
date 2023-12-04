@@ -1,44 +1,25 @@
-import { AppAction } from './AppAction';
 import { createReducer } from './createReducer';
+import { updateStoreSlice } from './updateStoreSlice';
 
-class Store {
-  flag: boolean;
-  text: string;
+describe('[function] createReducer', () => {
+  test('action factory type of reducers with action is a passed action type', () => {
+    class UserSlice {
+      name: string | undefined;
+    }
 
-  constructor() {
-    this.flag = false;
-    this.text = '';
-  }
-}
+    const createUser = createReducer<{ name: string }>('createUser', async ({ action, dispatch, getState }) => {
+      updateStoreSlice(UserSlice)({
+        name: action.payload.name,
+      });
+    });
 
-const actionType = 'UPDATE_STORE';
-const reducer = createReducer(new Store(), actionType);
-
-it('update store', () => {
-  const store = new Store();
-  const action = new AppAction(actionType, {
-    flag: true,
+    const action = createUser({ name: '' });
+    expect(action.type.startsWith('createUser')).toBe(true);
   });
 
-  const updatedStore = reducer(store, action);
-  expect(updatedStore).not.toStrictEqual(store);
-  expect(updatedStore.flag).toEqual(true);
-});
-
-it('any action', () => {
-  const store = new Store();
-  const action = new AppAction('some_type', {
-    flag: true,
+  test('action factory type of reducers without action is just a function', () => {
+    const loadUsers = createReducer('loadUsers', async () => {});
+    const action = loadUsers();
+    expect(action.type.startsWith('loadUsers')).toBe(true);
   });
-
-  const updatedStore = reducer(store, action);
-  expect(updatedStore === store).toBe(true);
-});
-
-it('empty action', () => {
-  const store = new Store();
-  const action = new AppAction(actionType);
-
-  const updatedStore = reducer(store, action);
-  expect(updatedStore === store).toBe(false);
 });

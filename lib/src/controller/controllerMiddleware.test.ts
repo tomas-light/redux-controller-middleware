@@ -70,10 +70,7 @@ function makeMiddleware() {
         controllerName: 'A',
         methodName,
       }),
-      {
-        controllerConstructor: ControllerA,
-        methodName,
-      }
+      new Map([[ControllerA, methodName]])
     );
 
     actionToControllerMap.set(
@@ -81,10 +78,7 @@ function makeMiddleware() {
         controllerName: 'B',
         methodName,
       }),
-      {
-        controllerConstructor: ControllerB,
-        methodName,
-      }
+      new Map([[ControllerB, methodName]])
     );
   });
 
