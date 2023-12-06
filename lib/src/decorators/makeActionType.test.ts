@@ -7,7 +7,7 @@ describe('[function] makeActionType', () => {
       methodName: 'loadUser',
       uniqueSalt: '123',
     });
-    expect(output).toBe('User_loadUser__123');
+    expect(output).toBe('user / loadUser  123');
   });
 
   test('controller name + method name', () => {
@@ -15,7 +15,7 @@ describe('[function] makeActionType', () => {
       controllerName: 'UserController',
       methodName: 'loadUser',
     });
-    expect(output).toBe('User_loadUser');
+    expect(output).toBe('user / loadUser');
   });
 
   test('method name', () => {

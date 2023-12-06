@@ -1,5 +1,5 @@
 import { storeSlice } from 'redux-controller-middleware';
-import { User } from '../types/User';
+import { User } from '../types/User.js';
 
 @storeSlice
 export class UserStore {

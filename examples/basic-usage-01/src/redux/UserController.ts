@@ -1,17 +1,18 @@
 import {
-  ControllerBase,
-  createAction,
-  watch,
-  Middleware,
   Action,
-  WatchedController,
+  ControllerBase,
+  Middleware,
   updateStoreSlice,
+  controller,
+  reducer,
+  WatchedController,
 } from 'redux-controller-middleware';
-import { UserApi } from '../api/UserApi';
-import { State } from '../configureReduxStore';
-import { UserStore } from './UserStore';
+import { UserApi } from '../api/UserApi.js';
+import { State } from '../configureReduxStore.js';
+import { User } from '../types/User.js';
+import { UserStore } from './UserStore.js';
 
-@watch
+@controller
 class UserController extends ControllerBase<State> {
   constructor(
     middleware: Middleware<State>,
@@ -20,7 +21,7 @@ class UserController extends ControllerBase<State> {
     super(middleware);
   }
 
-  @watch
+  @reducer
   async loadUsers() {
     this.dispatch(
       updateStoreSlice(UserStore)({
@@ -41,7 +42,7 @@ class UserController extends ControllerBase<State> {
     }
 
     const { users } = this.getState().users;
-    const updatedUsers = new Map(users);
+    const updatedUsers = new Map<number, User>(users);
 
     response.data.forEach((user) => {
       updatedUsers.set(user.userId, user);
@@ -55,7 +56,7 @@ class UserController extends ControllerBase<State> {
     );
   }
 
-  @watch
+  @reducer
   openUserById(action: Action<{ userId: number }>) {
     const { userId } = action.payload;
     const { users } = this.getState().users;
@@ -70,7 +71,7 @@ class UserController extends ControllerBase<State> {
     }
   }
 
-  @watch
+  @reducer
   showErrorToast(action: Action<{ error: string }>) {
     const { error } = action.payload;
     // display message in UI if needed

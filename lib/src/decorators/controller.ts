@@ -24,7 +24,7 @@ export interface ReduxControllerDecorator
 /**
  * It registers your controller in the middleware. You need to add `@actionHandler` decorator to some of your methods
  * */
-export const reduxController: ReduxControllerDecorator = ((saltOrConstructor, context) => {
+export const controller: ReduxControllerDecorator = ((saltOrConstructor, context) => {
   if (typeof saltOrConstructor === 'string') {
     return reduxFactoryClassDecorator(saltOrConstructor);
   }

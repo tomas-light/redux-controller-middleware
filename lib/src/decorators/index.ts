@@ -1,4 +1,4 @@
 export * from './watch';
-export * from './reduxController';
+export * from './controller';
 export * from './reducer';
 export * from './storeSlice';

@@ -13,11 +13,11 @@ export function makeActionType(parameters: {
   let prefix = '';
   if (controllerName) {
     const simplifiedName = controllerName.replace('Controller', '');
-    prefix = `${simplifiedName}_`;
+    prefix = `${simplifiedName[0].toLowerCase() + simplifiedName.slice(1)} / `;
   }
 
   const name = methodName ?? '';
-  const salt = uniqueSalt ? `__${uniqueSalt}` : '';
+  const salt = uniqueSalt ? `  ${uniqueSalt}` : '';
 
   return `${prefix}${name}${salt}`;
 }

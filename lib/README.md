@@ -35,7 +35,7 @@ export function configureReduxStore() {
   return configureStore({
     middleware: (getDefaultMiddleware) =>
       // add react-redux-controller middleware to redux
-      getDefaultMiddleware().concat([controllerMiddleware()]),
+      getDefaultMiddleware().concat(controllerMiddleware()),
   });
 }
 ```
@@ -146,13 +146,13 @@ import { controllerMiddleware } from 'redux-controller-middleware';
 export function configureReduxStore() {
   const middleware = controllerMiddleware<State>({
     // use cheap-di container for Dependency Injection
-    container,
+    getContainer: () => container,
   });
 
   return configureStore({
     // ...
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat([middleware]),
+      getDefaultMiddleware().concat(middleware),
   });
 }
 ```
@@ -160,12 +160,12 @@ export function configureReduxStore() {
 Create a controller to encapsulate a piece of application logic.
 ```ts
 // User.controller.ts
-import { createAction, ControllerBase, reduxController, reducer, updateStore } from 'redux-controller-middleware';
+import { createAction, ControllerBase, controller, reducer, updateStore } from 'redux-controller-middleware';
 import { State } from './configureReduxStore';
 import { UsersSlice } from './Users.slice';
 
 // prepare the class to use static methods for creating of actions
-@reduxController
+@controller
 export class UserController extends ControllerBase<State> {
   // add action creator with name of the method: { type: 'loadUserList' }
   @reducer
@@ -267,11 +267,11 @@ const App = () => {
 
 ```ts
 // User.controller.ts
-import { ControllerBase, Middleware, reduxController, reducer, updateStore } from 'redux-controller-middleware';
+import { ControllerBase, Middleware, controller, reducer, updateStore } from 'redux-controller-middleware';
 import { UserApi, UserStorage } from './api';
 import { State } from './configureReduxStore';
 
-@reduxController
+@controller
 export class UserController extends ControllerBase<State> {
   constructor(
     middleware: Middleware<State>,

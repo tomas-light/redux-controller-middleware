@@ -1,6 +1,6 @@
 import { Constructor, Controller, ControllerConstructor } from '../types';
 import { reducer } from './reducer';
-import { reduxController } from './reduxController';
+import { controller } from './controller';
 
 export function watch<TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
   constructor: TConstructor,
@@ -19,7 +19,7 @@ export function watch<This, Args extends any[], Return>(
  * */
 export function watch(constructorOrMethod?: any, context?: DecoratorContext) {
   if (context?.kind === 'class') {
-    return reduxController(constructorOrMethod as Constructor, context);
+    return controller(constructorOrMethod as Constructor, context);
   }
 
   if (context?.kind === 'method') {

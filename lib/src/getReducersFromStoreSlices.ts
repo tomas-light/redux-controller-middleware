@@ -25,23 +25,24 @@ import { Constructor } from './types';
  * import { combineReducers } from 'redux';
  * const rootReducer = combineReducers(reducers);
  * */
-export function getReducersFromStoreSlices<
-  StoreSlices extends {
-    [sliceName: string]: Constructor;
-  },
->(storeSlices: StoreSlices) {
-  return Object.entries(storeSlices).reduce(
-    (reducers, [reducerName, storeSlice]) => {
-      if (isDecoratedStoreSlice(storeSlice)) {
-        reducers[reducerName as keyof StoreSlices] = storeSlice.reducer as unknown as Reducer<
-          StoreSlices[keyof StoreSlices]
-        >;
-      }
-
-      return reducers;
-    },
-    {} as {
-      [sliceName in keyof StoreSlices]: Reducer<StoreSlices[sliceName]>;
+export function getReducersFromStoreSlices<StoreSlices extends Record<string, Constructor>>(
+  storeSlices: StoreSlices
+): ReducersFromStores<StoreSlices> {
+  return Object.entries(storeSlices).reduce((reducers, [reducerName, storeSlice]) => {
+    if (isDecoratedStoreSlice(storeSlice)) {
+      reducers[reducerName as keyof StoreSlices] = storeSlice.reducer as ReducerFromStore<
+        StoreSlices[keyof StoreSlices]
+      >;
     }
-  );
+
+    return reducers;
+  }, {} as ReducersFromStores<StoreSlices>);
 }
+
+export type ReducerFromStore<StoreSlice> = StoreSlice extends Constructor
+  ? Reducer<InstanceType<StoreSlice>>
+  : Reducer<StoreSlice>;
+
+export type ReducersFromStores<StoreSlices extends Record<string, Constructor>> = {
+  [sliceName in keyof StoreSlices]: ReducerFromStore<StoreSlices[sliceName]>;
+};

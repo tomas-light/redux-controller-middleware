@@ -1,7 +1,7 @@
-import { AnyAction, Reducer as ReduxReducer } from 'redux';
+import { Reducer } from 'redux';
 
-export type InferState<Reducers extends Record<string, ReduxReducer<any, AnyAction>>> = {
-  [storeName in keyof Reducers as Reducers[storeName] extends ReduxReducer<any, any>
+export type InferState<Reducers extends Record<string, Reducer>> = {
+  [storeName in keyof Reducers as Reducers[storeName] extends Reducer
     ? storeName
-    : never]: Reducers[storeName] extends ReduxReducer<infer Store, AnyAction> ? Store : never;
+    : never]: Reducers[storeName] extends Reducer<infer Store> ? Store : never;
 };
