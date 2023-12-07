@@ -1,4 +1,4 @@
-import { makeActionType } from './makeActionType';
+import { makeActionType } from './makeActionType.js';
 
 describe('[function] makeActionType', () => {
   test('controller name + method name + salt', () => {

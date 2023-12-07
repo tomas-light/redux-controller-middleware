@@ -1,7 +1,7 @@
 import { Action as ReduxAction } from 'redux';
-import { AppAction } from '../AppAction';
-import { ActionMaybeWithContainer, isAction } from '../types';
-import { addContainerToAction } from './addContainerToAction';
+import { AppAction } from '../AppAction.js';
+import { ActionMaybeWithContainer, isAction } from '../types/index.js';
+import { addContainerToAction } from './addContainerToAction.js';
 
 const myContainer = {} as any;
 

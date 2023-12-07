@@ -1,1 +1,1 @@
-export * from './useDispatchWithDiScope';
+export * from './useDispatchWithDiScope.js';

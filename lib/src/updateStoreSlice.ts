@@ -1,6 +1,6 @@
-import { createAction } from './createAction';
-import { isDecoratedStoreSlice } from './decorators';
-import { Constructor } from './types';
+import { createAction } from './createAction.js';
+import { isDecoratedStoreSlice } from './decorators/index.js';
+import { Constructor } from './types/index.js';
 
 export function updateStoreSlice<T, StoreSlice extends Constructor<T>>(storeSlice: StoreSlice) {
   if (!isDecoratedStoreSlice(storeSlice)) {

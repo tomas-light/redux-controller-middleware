@@ -1,4 +1,4 @@
-import { createAction } from './createAction';
+import { createAction } from './createAction.js';
 
 it('simple action', () => {
   const actionType = 'MY_ACTION';

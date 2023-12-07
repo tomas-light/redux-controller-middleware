@@ -1,7 +1,7 @@
-import { actionToControllerMap, ControllerMethodMap, methodNamesTemporaryBox } from '../constants';
-import { createAction } from '../createAction';
-import { Constructor, Controller, ControllerConstructor } from '../types';
-import { makeActionType } from './makeActionType';
+import { actionToControllerMap, methodNamesTemporaryBox } from '../constants';
+import { createAction } from '../createAction.js';
+import { Constructor, Controller, ControllerConstructor } from '../types/index.js';
+import { makeActionType } from './makeActionType.js';
 
 export interface Class_ReduxControllerDecorator {
   <TController extends Controller, TConstructor extends ControllerConstructor<TController>>(

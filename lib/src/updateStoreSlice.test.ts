@@ -1,5 +1,5 @@
-import { storeSlice } from './decorators';
-import { updateStoreSlice } from './updateStoreSlice';
+import { storeSlice } from './decorators/index.js';
+import { updateStoreSlice } from './updateStoreSlice.js';
 
 describe('[function] updateStoreSlice', () => {
   test('it creates action for store updating', () => {

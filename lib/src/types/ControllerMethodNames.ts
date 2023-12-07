@@ -1,4 +1,6 @@
-import { Action, ControllerConstructor, InferConstructorResult, IsString } from './index';
+import { Action } from './Action.js';
+import { ControllerConstructor, InferConstructorResult } from './ControllerConstructor.js';
+import { IsString } from './IsString.js';
 
 export type ControllerMethodNames<
   TConstructor extends ControllerConstructor,

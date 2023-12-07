@@ -1,6 +1,6 @@
-import { Constructor, Controller, ControllerConstructor } from '../types';
-import { reducer } from './reducer';
-import { controller } from './controller';
+import { Constructor, Controller, ControllerConstructor } from '../types/index.js';
+import { reducer } from './reducer.js';
+import { controller } from './controller.js';
 
 export function watch<TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
   constructor: TConstructor,

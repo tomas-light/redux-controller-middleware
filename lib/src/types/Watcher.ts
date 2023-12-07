@@ -1,5 +1,5 @@
-import { ActionType } from './ActionType';
-import { ControllerConstructor } from './ControllerConstructor';
+import { ActionType } from './ActionType.js';
+import { ControllerConstructor } from './ControllerConstructor.js';
 
 export type Watcher = {
   get: (actionType: ActionType) => string | undefined;

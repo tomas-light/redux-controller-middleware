@@ -1,6 +1,6 @@
 import { AnyAction, Reducer } from 'redux';
-import { createStoreSliceReducer } from '../createStoreSliceReducer';
-import { Constructor } from '../types';
+import { createStoreSliceReducer } from '../createStoreSliceReducer.js';
+import { Constructor } from '../types/index.js';
 
 export type DecoratedStoreSlice<T, StoreSlice extends Constructor<T> = Constructor<T>> = StoreSlice & {
   update: string;

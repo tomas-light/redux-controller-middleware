@@ -1,5 +1,5 @@
-import { createAction } from './createAction';
-import { Action, ActionFactory, isAction } from './types';
+import { createAction } from './createAction.js';
+import { Action, ActionFactory, isAction } from './types/index.js';
 
 export const FIRST_ACTION_IN_CHAIN_TYPE = 'Action chain start';
 export const FALLBACK_ACTION_TYPE = 'No actions were passed to chain function';

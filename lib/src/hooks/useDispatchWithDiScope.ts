@@ -1,7 +1,7 @@
 import { useDiContext } from 'cheap-di-react';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { addContainerToAction } from './addContainerToAction';
+import { addContainerToAction } from './addContainerToAction.js';
 
 /** Warning! it is experimental hook, we don't recommend to use it */
 function useDispatchWithDiScope() {

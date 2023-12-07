@@ -1,11 +1,11 @@
 import { Container } from 'cheap-di';
 import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
-import { actionToControllerMap } from '../constants';
-import { callActionReducer } from '../decorators/callActionReducer';
-import { dispatchNextActions } from '../decorators/dispatchNextActions';
-import { Middleware } from '../Middleware';
-import { ActionMaybeWithContainer, isAction } from '../types';
-import { tryToFindDependencyContainer } from './tryToFindDependencyContainer';
+import { actionToControllerMap } from '../constants.js';
+import { callActionReducer } from '../decorators/callActionReducer.js';
+import { dispatchNextActions } from '../decorators/dispatchNextActions.js';
+import { Middleware } from '../Middleware.js';
+import { ActionMaybeWithContainer, isAction } from '../types/index.js';
+import { tryToFindDependencyContainer } from './tryToFindDependencyContainer.js';
 
 type MiddlewareOptions = {
   getContainer?: () => Container;

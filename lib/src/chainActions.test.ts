@@ -1,6 +1,6 @@
-import { chainActions, FALLBACK_ACTION_TYPE, FIRST_ACTION_IN_CHAIN_TYPE } from './chainActions';
-import { createAction } from './createAction';
-import { Action } from './types';
+import { chainActions, FALLBACK_ACTION_TYPE, FIRST_ACTION_IN_CHAIN_TYPE } from './chainActions.js';
+import { createAction } from './createAction.js';
+import { Action } from './types/index.js';
 
 describe('if null or undefined', () => {
   test(`it returns action with type ${FALLBACK_ACTION_TYPE}`, () => {

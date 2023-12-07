@@ -1,5 +1,5 @@
 import { AnyAction, Reducer as ReduxReducer } from 'redux';
-import { Action, ActionType } from './types';
+import { Action, ActionType } from './types/index.js';
 
 export function createStoreSliceReducer<T>(initialStore: T, updateActionType: ActionType) {
   return ((store: T = initialStore, action: Action<any>): T => {

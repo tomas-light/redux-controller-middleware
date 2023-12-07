@@ -1,4 +1,4 @@
-import { tryToFindDependencyContainer } from './tryToFindDependencyContainer';
+import { tryToFindDependencyContainer } from './tryToFindDependencyContainer.js';
 
 test('if there is no container it returns undefined', () => {
   const container = tryToFindDependencyContainer({} as any);

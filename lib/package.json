@@ -1,6 +1,6 @@
 {
   "name": "redux-controller-middleware",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.3",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
   "scripts": {
     "compile": "tsc --build tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",

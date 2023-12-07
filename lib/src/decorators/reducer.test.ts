@@ -1,5 +1,5 @@
-import { methodNamesTemporaryBox } from '../constants';
-import { reducer } from './reducer';
+import { methodNamesTemporaryBox } from '../constants.js';
+import { reducer } from './reducer.js';
 
 describe('[function] reducer', () => {
   beforeEach(() => {

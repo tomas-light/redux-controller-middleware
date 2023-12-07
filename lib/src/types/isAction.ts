@@ -1,4 +1,4 @@
-import { Action } from './Action';
+import { Action } from './Action.js';
 
 export function isAction(action: any): action is Action {
   return (

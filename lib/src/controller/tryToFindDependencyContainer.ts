@@ -1,5 +1,5 @@
 import { Container } from 'cheap-di';
-import { ActionMaybeWithContainer } from '../types';
+import { ActionMaybeWithContainer } from '../types/index.js';
 
 function tryToFindDependencyContainer(action: ActionMaybeWithContainer, getContainer?: () => Container) {
   let container: Container | undefined = undefined;

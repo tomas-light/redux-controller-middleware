@@ -1,5 +1,5 @@
-import { Action } from './Action';
-import { Controller } from './Controller';
+import { Action } from './Action.js';
+import { Controller } from './Controller.js';
 
 export type WatchedController<TController extends Controller> = {
   [methodName in keyof TController]: TController[methodName] extends (mayBeAction: infer MayBeAction) => any

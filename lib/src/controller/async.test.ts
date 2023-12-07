@@ -1,8 +1,8 @@
 import { Dispatch } from 'redux';
-import { watch } from '../decorators';
-import { Action, WatchedController } from '../types';
-import { ControllerBase } from './ControllerBase';
-import { controllerMiddleware } from './controllerMiddleware';
+import { watch } from '../decorators/index.js';
+import { Action, WatchedController } from '../types/index.js';
+import { ControllerBase } from './ControllerBase.js';
+import { controllerMiddleware } from './controllerMiddleware.js';
 
 test('if callback actions will be dispatched only after main action is ended one by one', async () => {
   async function asyncOperation() {

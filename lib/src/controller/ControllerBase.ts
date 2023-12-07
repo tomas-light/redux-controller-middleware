@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
-import { Middleware } from '../Middleware';
-import { Action, Controller } from '../types';
+import { Middleware } from '../Middleware.js';
+import { Action, Controller } from '../types/index.js';
 
 export class ControllerBase<State extends {} = {}> implements Controller<State> {
   protected readonly dispatch: Dispatch<Action<any>>;

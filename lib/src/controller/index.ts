@@ -1,2 +1,2 @@
-export * from './ControllerBase';
-export * from './controllerMiddleware';
+export * from './ControllerBase.js';
+export * from './controllerMiddleware.js';

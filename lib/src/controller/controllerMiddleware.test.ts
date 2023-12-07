@@ -1,10 +1,10 @@
 import { AnyAction, Dispatch, MiddlewareAPI } from 'redux';
-import { actionToControllerMap } from '../constants';
-import { createAction } from '../createAction';
-import { makeActionType } from '../decorators/makeActionType';
-import { Action } from '../types';
-import { ControllerBase } from './ControllerBase';
-import { controllerMiddleware } from './controllerMiddleware';
+import { actionToControllerMap } from '../constants.js';
+import { createAction } from '../createAction.js';
+import { makeActionType } from '../decorators/makeActionType.js';
+import { Action } from '../types/index.js';
+import { ControllerBase } from './ControllerBase.js';
+import { controllerMiddleware } from './controllerMiddleware.js';
 
 const ACTIONS = {
   actionA1: 'A_method1',

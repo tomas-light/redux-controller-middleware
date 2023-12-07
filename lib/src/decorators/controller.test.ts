@@ -1,8 +1,8 @@
 import { ActionReducerOrControllerMethod, actionToControllerMap, ControllerMethodMap } from '../constants';
-import { Action, Constructor } from '../types';
-import { controller } from './controller';
-import { makeActionType } from './makeActionType';
-import { reducer } from './reducer';
+import { Action, Constructor } from '../types/index.js';
+import { controller } from './controller.js';
+import { makeActionType } from './makeActionType.js';
+import { reducer } from './reducer.js';
 
 describe('[function] reduxController', () => {
   beforeEach(() => {

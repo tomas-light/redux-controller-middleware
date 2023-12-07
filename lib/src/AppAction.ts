@@ -1,5 +1,5 @@
 import { Container } from 'cheap-di';
-import { Action, ActionMaybeWithContainer, ActionFactory } from './types';
+import { Action, ActionMaybeWithContainer, ActionFactory } from './types/index.js';
 
 export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<Payload> {
   type: any;

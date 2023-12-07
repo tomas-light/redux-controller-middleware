@@ -1,5 +1,5 @@
-import { createReducer } from './createReducer';
-import { updateStoreSlice } from './updateStoreSlice';
+import { createReducer } from './createReducer.js';
+import { updateStoreSlice } from './updateStoreSlice.js';
 
 describe('[function] createReducer', () => {
   test('action factory type of reducers with action is a passed action type', () => {

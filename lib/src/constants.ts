@@ -1,5 +1,5 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
-import { Action, Constructor } from './types';
+import { Action, Constructor } from './types/index.js';
 
 export type ControllerMethodMap = Map<
   Constructor, // controller ref

@@ -1,5 +1,5 @@
-import { Middleware } from '../Middleware';
-import { Controller } from './Controller';
+import { Middleware } from '../Middleware.js';
+import { Controller } from './Controller.js';
 
 export interface ControllerConstructor<State extends {} = {}> {
   new (middlewareAPI: Middleware, ...args: any[]): Controller<State>;

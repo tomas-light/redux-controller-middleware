@@ -1,5 +1,5 @@
-import { AppAction } from './AppAction';
-import { createStoreSliceReducer } from './createStoreSliceReducer';
+import { AppAction } from './AppAction.js';
+import { createStoreSliceReducer } from './createStoreSliceReducer.js';
 
 class Store {
   flag: boolean;

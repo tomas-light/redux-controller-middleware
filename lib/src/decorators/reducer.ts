@@ -1,5 +1,5 @@
-import { methodNamesTemporaryBox } from '../constants';
-import { Action } from '../types';
+import { methodNamesTemporaryBox } from '../constants.js';
+import { Action } from '../types/index.js';
 
 export interface ReducerDecorator {
   <This, TPayload, Args extends Action<TPayload>[], Return>(
