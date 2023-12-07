@@ -1,4 +1,4 @@
-import { ActionReducerOrControllerMethod, actionToControllerMap, ControllerMethodMap } from '../constants';
+import { ActionReducerOrControllerMethod, actionToControllerMap, ControllerMethodMap } from '../constants.js';
 import { Action, Constructor } from '../types/index.js';
 import { controller } from './controller.js';
 import { makeActionType } from './makeActionType.js';

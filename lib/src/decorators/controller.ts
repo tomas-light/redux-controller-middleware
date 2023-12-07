@@ -1,4 +1,4 @@
-import { actionToControllerMap, methodNamesTemporaryBox } from '../constants';
+import { actionToControllerMap, methodNamesTemporaryBox } from '../constants.js';
 import { createAction } from '../createAction.js';
 import { Constructor, Controller, ControllerConstructor } from '../types/index.js';
 import { makeActionType } from './makeActionType.js';

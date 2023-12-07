@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { addContainerToAction } from './addContainerToAction.js';
 
 /** Warning! it is experimental hook, we don't recommend to use it */
-function useDispatchWithDiScope() {
+export function useDispatchWithDiScope() {
   const dispatch = useDispatch();
   const diContext = useDiContext();
 
@@ -18,5 +18,3 @@ function useDispatchWithDiScope() {
 
   return dispatchWithContainerScope;
 }
-
-export { useDispatchWithDiScope };
