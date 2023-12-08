@@ -4,22 +4,34 @@ import { actionToControllerMap } from '../constants.js';
 import { callActionReducer } from '../decorators/callActionReducer.js';
 import { dispatchNextActions } from '../decorators/dispatchNextActions.js';
 import { Middleware } from '../Middleware.js';
-import { ActionMaybeWithContainer, isAction } from '../types/index.js';
-import { tryToFindDependencyContainer } from './tryToFindDependencyContainer.js';
+import { Action, isAction } from '../types/index.js';
 
-type MiddlewareOptions = {
+type ControllerMiddlewareOptions = {
   getContainer?: () => Container;
 };
 
-function controllerMiddleware<State>(options: MiddlewareOptions = {}): ReduxMiddleware<Dispatch, State> {
-  return (middlewareAPI: MiddlewareAPI<Dispatch, State>) => {
-    return (next: (action: ActionMaybeWithContainer) => void) => {
-      return async (action: ActionMaybeWithContainer) => {
+function controllerMiddleware<State, _DispatchExt = {}>(
+  options: ControllerMiddlewareOptions = {}
+): ReduxMiddleware<_DispatchExt, State, Dispatch> {
+  return (middlewareAPI) => {
+    const container = options?.getContainer?.();
+    if (container) {
+      container.registerInstance(middlewareAPI).as(Middleware);
+    }
+
+    return (next) => {
+      return async (action) => {
+        next(action);
+
+        // we process only actions created with the redux-controller-middleware
+        if (!isAction(action)) {
+          return;
+        }
+
         await handleAction({
           ...options,
           middlewareAPI,
           action,
-          next,
         });
       };
     };
@@ -27,46 +39,32 @@ function controllerMiddleware<State>(options: MiddlewareOptions = {}): ReduxMidd
 }
 
 async function handleAction<State>(
-  params: MiddlewareOptions & {
+  params: ControllerMiddlewareOptions & {
     middlewareAPI: MiddlewareAPI<Dispatch, State>;
-    next: (action: ActionMaybeWithContainer) => void;
-    action: ActionMaybeWithContainer;
+    action: Action<unknown>;
   }
 ) {
-  const { getContainer, middlewareAPI, action, next } = params;
-
-  // we process only actions created with the redux-controller-middleware
-  if (!isAction(action)) {
-    next(action);
-    return;
-  }
-
-  const container = tryToFindDependencyContainer(action, getContainer);
-  if (container) {
-    container.registerInstance(middlewareAPI).as(Middleware);
-  }
+  const { getContainer, middlewareAPI, action } = params;
 
   const actionReducer = actionToControllerMap.get(action.type);
   if (actionReducer) {
     await callActionReducer({
       middlewareAPI,
-      container,
+      getContainer,
       actionReducer,
       action,
     });
   }
 
-  next(action);
-
   if (action.stopPropagation) {
-    action.handled?.();
+    action.executionCompleted?.();
     return;
   }
 
   await dispatchNextActions(middlewareAPI, action);
 
-  action.handled?.();
+  action.executionCompleted?.();
 }
 
-export type { MiddlewareOptions };
+export type { ControllerMiddlewareOptions };
 export { controllerMiddleware };

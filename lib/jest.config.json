@@ -11,5 +11,11 @@
     "^.+\\.tsx?$": [
       "ts-jest"
     ]
+  },
+  "moduleNameMapper": {
+    // replaces
+    // `import {} from './ContainerImpl.js'` with
+    // `import {} from './ContainerImpl'`
+    "^(\\.\\.?\\/.+)\\.jsx?$": "$1"
   }
 }

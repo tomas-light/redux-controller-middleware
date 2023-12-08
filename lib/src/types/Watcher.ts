@@ -1,7 +1,7 @@
-import { ActionType } from './ActionType.js';
+import { UnknownAction } from 'redux';
 import { ControllerConstructor } from './ControllerConstructor.js';
 
 export type Watcher = {
-  get: (actionType: ActionType) => string | undefined;
+  get: (actionType: UnknownAction['type']) => string | undefined;
   type: ControllerConstructor;
 };

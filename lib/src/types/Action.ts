@@ -1,10 +1,10 @@
-import { AnyAction } from 'redux';
+import { UnknownAction } from 'redux';
 
-export interface Action<Payload = undefined> extends AnyAction {
+export interface Action<Payload = undefined> extends UnknownAction {
   payload: Payload;
 
   /** next actions chain (actions that will be dispatched after handling of this one) */
-  readonly actions: (Action<any> | ActionFactory)[];
+  readonly actions: (ActionFactory | Action<unknown>)[];
 
   /** is action chain stopped or not */
   readonly stopPropagation: boolean;
@@ -18,7 +18,7 @@ export interface Action<Payload = undefined> extends AnyAction {
    * authorizeAction.addNextActions(loadProfileAction, loadSettingsAction);
    * dispatch(authorizeAction);
    * */
-  addNextActions(...actions: Action['actions']): Action<Payload>;
+  addNextActions(...actions: Action<unknown>['actions']): Action<Payload>;
 
   /** If the action has next actions in chain, this method stops them from dispatching */
   stop(): void;
@@ -30,7 +30,7 @@ export interface Action<Payload = undefined> extends AnyAction {
    * to this property, that will be triggered after all next action will be handled.
    * It is signal for the middleware: this action was handled, and we can take
    * next action in a chain */
-  handled?: () => void;
+  executionCompleted?: () => void;
 }
 
-export type ActionFactory = () => Action<any> | void | Promise<void>;
+export type ActionFactory = () => Action<unknown> | void | Promise<void>;

@@ -13,13 +13,14 @@ function addContainerToAction(action: ReduxAction, diContext: DiContextType) {
     return action;
   }
 
-  const { type } = action;
-  delete action.type;
+  const newAction = createAction<Record<string, unknown>>(action.type, {});
 
-  const newAction = createAction<any>(type, {});
   for (const [key, value] of Object.entries(action)) {
-    newAction.payload[key] = value;
+    if (key !== ('type' satisfies keyof typeof action)) {
+      newAction.payload![key] = value;
+    }
   }
+
   return newAction;
 }
 

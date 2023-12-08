@@ -4,9 +4,15 @@ import { Constructor, Controller, ControllerConstructor } from '../types/index.j
 import { makeActionType } from './makeActionType.js';
 
 export interface Class_ReduxControllerDecorator {
+  // stage 3 decorator
   <TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
     constructor: TConstructor,
     context: ClassDecoratorContext
+  ): TConstructor;
+
+  // stage 2 decorator
+  <TController extends Controller, TConstructor extends ControllerConstructor<TController>>(
+    constructor: TConstructor
   ): TConstructor;
 }
 export interface ClassFactory_ReduxControllerDecorator {
@@ -34,10 +40,10 @@ export const controller: ReduxControllerDecorator = ((saltOrConstructor, context
   return reduxFactoryClassDecorator(uniqueSalt)(saltOrConstructor, context);
 }) as ReduxControllerDecorator;
 
-const reduxFactoryClassDecorator: ClassFactory_ReduxControllerDecorator = (uniqueSalt) => {
+const reduxFactoryClassDecorator: ClassFactory_ReduxControllerDecorator = ((uniqueSalt) => {
   return (constructor, context) => {
-    const watchedMethodNames = getWatchedMethodNames(context);
-    const controllerName = context.name;
+    const watchedMethodNames = getWatchedMethodNames();
+    const controllerName = context?.name ?? constructor.name;
 
     watchedMethodNames.forEach((methodName) => {
       const actionType = makeActionType({
@@ -57,10 +63,9 @@ const reduxFactoryClassDecorator: ClassFactory_ReduxControllerDecorator = (uniqu
 
     return constructor;
   };
-};
+}) as ClassFactory_ReduxControllerDecorator;
 
-// todo: use context.metadata for passing method names from method-decorator, when it will be ready
-function getWatchedMethodNames(context: ClassDecoratorContext) {
+function getWatchedMethodNames() {
   const watchedMethodNames = methodNamesTemporaryBox.slice();
   methodNamesTemporaryBox.splice(0, methodNamesTemporaryBox.length);
 

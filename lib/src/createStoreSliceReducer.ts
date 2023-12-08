@@ -1,8 +1,8 @@
-import { AnyAction, Reducer as ReduxReducer } from 'redux';
-import { Action, ActionType } from './types/index.js';
+import { Reducer, UnknownAction } from 'redux';
+import { Action } from './types/index.js';
 
-export function createStoreSliceReducer<T>(initialStore: T, updateActionType: ActionType) {
-  return ((store: T = initialStore, action: Action<any>): T => {
+export function createStoreSliceReducer<StoreSlice>(initialStore: StoreSlice, updateActionType: UnknownAction['type']) {
+  const storeSliceReducer: Reducer<StoreSlice, Action<Partial<StoreSlice>>> = (store = initialStore, action) => {
     if (action.type !== updateActionType) {
       return store;
     }
@@ -17,5 +17,7 @@ export function createStoreSliceReducer<T>(initialStore: T, updateActionType: Ac
     return {
       ...store,
     };
-  }) as ReduxReducer<T, AnyAction>;
+  };
+
+  return storeSliceReducer;
 }

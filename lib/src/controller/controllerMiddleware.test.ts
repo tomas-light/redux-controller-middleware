@@ -1,19 +1,19 @@
-import { AnyAction, Dispatch, MiddlewareAPI } from 'redux';
+import { UnknownAction, Dispatch, MiddlewareAPI } from 'redux';
 import { actionToControllerMap } from '../constants.js';
 import { createAction } from '../createAction.js';
 import { makeActionType } from '../decorators/makeActionType.js';
-import { Action } from '../types/index.js';
+import { Action, isAction } from '../types/index.js';
 import { ControllerBase } from './ControllerBase.js';
 import { controllerMiddleware } from './controllerMiddleware.js';
 
 const ACTIONS = {
-  actionA1: 'A_method1',
-  actionA2: 'A_method2',
-  actionA3: 'A_method3',
+  actionA1: makeActionType({ controllerName: 'A', methodName: 'method1' }),
+  actionA2: makeActionType({ controllerName: 'A', methodName: 'method2' }),
+  actionA3: makeActionType({ controllerName: 'A', methodName: 'method3' }),
 
-  actionB1: 'B_method1',
-  actionB2: 'B_method2',
-  actionB3: 'B_method3',
+  actionB1: makeActionType({ controllerName: 'B', methodName: 'method1' }),
+  actionB2: makeActionType({ controllerName: 'B', methodName: 'method2' }),
+  actionB3: makeActionType({ controllerName: 'B', methodName: 'method3' }),
 };
 
 class _Controller extends ControllerBase<any> {
@@ -46,9 +46,11 @@ class _Controller extends ControllerBase<any> {
 function makeMiddleware() {
   const calledMethods: string[] = [];
   const nextCalled: string[] = [];
-  const next = jest.fn((action: AnyAction) => {
-    nextCalled.push(action.type);
-  }) as Dispatch;
+  const next = jest.fn((action: unknown) => {
+    if (isAction(action)) {
+      nextCalled.push(action.type);
+    }
+  }) as (action: unknown) => unknown;
 
   actionToControllerMap.clear();
 
@@ -83,9 +85,13 @@ function makeMiddleware() {
   });
 
   const middleware = controllerMiddleware();
-  const handleAction = middleware({
-    dispatch: (action: Action<any>) => handleAction(action),
-  } as any)(next);
+  const _middleware = middleware({
+    dispatch: (action) => handleAction(action) as typeof action,
+    getState(): unknown {
+      return undefined;
+    },
+  });
+  const handleAction = _middleware(next);
 
   return {
     calledMethods,

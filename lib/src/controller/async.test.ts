@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { watch } from '../decorators/index.js';
+import { controller, reducer } from '../decorators/index.js';
 import { Action, WatchedController } from '../types/index.js';
 import { ControllerBase } from './ControllerBase.js';
 import { controllerMiddleware } from './controllerMiddleware.js';
@@ -14,9 +14,9 @@ test('if callback actions will be dispatched only after main action is ended one
 
   const callStack: string[] = [];
 
-  @watch
+  @controller
   class Controller1 extends ControllerBase<any> {
-    @watch
+    @reducer
     async init() {
       callStack.push('1 start');
       await asyncOperation();
@@ -28,9 +28,9 @@ test('if callback actions will be dispatched only after main action is ended one
 
   const controller1 = Controller1 as unknown as WatchedController<Controller1>;
 
-  @watch
+  @controller
   class Controller2 extends ControllerBase<any> {
-    @watch
+    @reducer
     async init() {
       callStack.push('2 start');
       await asyncOperation();
@@ -42,9 +42,9 @@ test('if callback actions will be dispatched only after main action is ended one
 
   const controller2 = Controller2 as unknown as WatchedController<Controller2>;
 
-  @watch
+  @controller
   class Controller3 extends ControllerBase<any> {
-    @watch
+    @reducer
     async init() {
       callStack.push('3 start');
       await asyncOperation();
@@ -54,7 +54,7 @@ test('if callback actions will be dispatched only after main action is ended one
 
   const controller3 = Controller3 as unknown as WatchedController<Controller3>;
 
-  const next = ((action: Action) => {}) as Dispatch;
+  const next = (() => {}) as (action: unknown) => unknown;
 
   const middleware = controllerMiddleware();
 

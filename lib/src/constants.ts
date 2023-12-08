@@ -7,7 +7,7 @@ export type ControllerMethodMap = Map<
 >;
 
 export type ActionReducerParameters<Payload, State = unknown> = MiddlewareAPI<Dispatch, State> & {
-  action?: Action<Payload>;
+  action: Action<Payload>;
 };
 export type ActionReducer<Payload, State> = (parameters: ActionReducerParameters<Payload, State>) => any;
 

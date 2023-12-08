@@ -37,7 +37,7 @@ it('any action', () => {
 
 it('empty action', () => {
   const store = new Store();
-  const action = new AppAction(actionType);
+  const action = new AppAction<Partial<Store>>(actionType);
 
   const updatedStore = reducer(store, action);
   expect(updatedStore === store).toBe(false);

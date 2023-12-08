@@ -63,7 +63,9 @@ describe('another action type', () => {
     const someData = [1, 2, 3];
 
     const action = { type: actionType, someData } as ReduxAction;
-    const newAction = addContainerToAction(action, { container: myContainer }) as ActionMaybeWithContainer;
+    const newAction = addContainerToAction(action, { container: myContainer }) as ActionMaybeWithContainer<{
+      someData: number[];
+    }>;
 
     expect(newAction.payload.someData).toBe(someData);
   });

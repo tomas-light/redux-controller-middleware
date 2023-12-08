@@ -33,6 +33,7 @@ import { controllerMiddleware} from 'redux-controller-middleware';
 
 export function configureReduxStore() {
   return configureStore({
+    //
     middleware: (getDefaultMiddleware) =>
       // add react-redux-controller middleware to redux
       getDefaultMiddleware().concat(controllerMiddleware()),
@@ -156,6 +157,16 @@ export function configureReduxStore() {
   });
 }
 ```
+
+> **_NOTE:_** you need to adjust tsconfig.json to use stage 2 decorators:
+> ```json
+> {
+>   "compilerOptions": {
+>     // ...
+>     "experimentalDecorators": true
+>   }
+> }
+> ```
 
 Create a controller to encapsulate a piece of application logic.
 ```ts

@@ -1,15 +1,19 @@
 import { Container } from 'cheap-di';
 import { Action, ActionMaybeWithContainer, ActionFactory } from './types/index.js';
+import { Writable } from './types/Writable.js';
 
 export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<Payload> {
   type: any;
   payload: Payload;
 
-  readonly actions: (Action | ActionFactory)[];
+  readonly actions: (ActionFactory | Action<unknown>)[];
 
   stopPropagation: boolean;
 
   container?: Container;
+
+  // implementation of UnknownAction
+  [extraProps: string]: unknown;
 
   constructor(type: string, payload?: Payload) {
     this.type = type;
@@ -18,16 +22,16 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
     this.stopPropagation = false;
   }
 
-  static addNextActions<Payload>(appAction: Action<Payload>, ...actions: Action['actions']) {
+  static addNextActions<Payload>(appAction: Action<Payload> | AppAction<Payload>, ...actions: Action['actions']) {
     appAction.actions.push(...actions);
-    return appAction;
+    return appAction as Action<Payload>;
   }
 
-  static stop<Payload>(appAction: Action<Payload>): void {
-    (appAction as AppAction<Payload>).stopPropagation = true;
+  static stop<Payload>(appAction: Action<Payload> | AppAction<Payload>): void {
+    (appAction as Writable<typeof appAction>).stopPropagation = true;
   }
 
-  static getActions<Payload>(appAction: Action<Payload>): Action['actions'] {
+  static getActions<Payload>(appAction: Action<Payload> | AppAction<Payload>): Action['actions'] {
     if (!Array.isArray(appAction.actions)) {
       return [];
     }
@@ -35,18 +39,14 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
     return appAction.actions;
   }
 
-  addNextActions(...actions: (Action | ActionFactory)[]) {
+  addNextActions(...actions: (ActionFactory | Action<unknown>)[]) {
     AppAction.addNextActions(this, ...actions);
-    return this;
+    return this as unknown as Action<Payload>;
   }
 
   stop(): void {
     AppAction.stop(this);
   }
-
-  // getActions(): ActionFactory[] {
-  // 	return AppAction.getActions(this);
-  // }
 
   toPlainObject(): Action<Payload> {
     const keys = Object.keys(this) as (keyof AppAction<Payload>)[];
@@ -68,7 +68,7 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
       plainObject[key] = this[key];
     });
 
-    plainObject.addNextActions = function (...actions: Action[]) {
+    plainObject.addNextActions = function (...actions: (ActionFactory | Action<unknown>)[]) {
       return AppAction.addNextActions(this, ...actions);
     };
     plainObject.stop = function () {

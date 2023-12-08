@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "declaration": false,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "inlineSources": true,
     "isolatedModules": true,
     "jsx": "react-jsx",

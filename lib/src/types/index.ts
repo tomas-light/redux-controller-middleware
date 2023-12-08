@@ -1,6 +1,5 @@
 export * from './Action.js';
 export * from './ActionMaybeWithContainer.js';
-export * from './ActionType.js';
 export * from './Constructor.js';
 export * from './Controller.js';
 export * from './ControllerConstructor.js';
