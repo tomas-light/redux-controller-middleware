@@ -1,7 +1,9 @@
+import { inject } from 'cheap-di';
 import { Dispatch } from 'redux';
 import { Middleware } from '../Middleware.js';
 import { Action, Controller } from '../types/index.js';
 
+@inject(Middleware)
 export class ControllerBase<State extends Record<string, unknown> = Record<string, unknown>>
   implements Controller<State>
 {
