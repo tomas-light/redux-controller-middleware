@@ -2,11 +2,11 @@ import { configureStore } from '@reduxjs/toolkit';
 import { container } from 'cheap-di';
 import { combineReducers } from 'redux';
 import { controllerMiddleware, getReducersFromStoreSlices, InferState } from 'redux-controller-middleware';
-import { UserStore } from './redux/UserStore.js';
+import { UserSlice } from './redux/User.slice.js';
 
 function makeReducers() {
   return getReducersFromStoreSlices({
-    users: UserStore,
+    users: UserSlice,
   });
 }
 
@@ -21,17 +21,10 @@ export function configureReduxStore() {
 
   return configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) => {
-      const middlewares = [];
-
-      const defaultMiddleware = getDefaultMiddleware({
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
         thunk: false,
         serializableCheck: false,
-      });
-      middlewares.push(...defaultMiddleware);
-      middlewares.push(middleware);
-
-      return middlewares;
-    },
+      }).concat(middleware),
   });
 }

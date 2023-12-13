@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import { Provider, TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { configureReduxStore, State } from './configureReduxStore.js';
-import { UserController } from './redux/UserController.js';
+import { UserController } from './redux/User.controller.js';
 
 describe('chained actions', () => {
   // you get it from API / url params / localStorage / etc...

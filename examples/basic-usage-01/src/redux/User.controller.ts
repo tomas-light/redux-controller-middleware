@@ -10,7 +10,7 @@ import {
 import { UserApi } from '../api/UserApi.js';
 import { State } from '../configureReduxStore.js';
 import { User } from '../types/User.js';
-import { UserStore } from './UserStore.js';
+import { UserSlice } from './User.slice.js';
 
 @controller
 class UserController extends ControllerBase<State> {
@@ -24,7 +24,7 @@ class UserController extends ControllerBase<State> {
   @reducer
   async loadUsers() {
     this.dispatch(
-      updateStoreSlice(UserStore)({
+      updateStoreSlice(UserSlice)({
         usersAreLoading: true,
       })
     );
@@ -32,7 +32,7 @@ class UserController extends ControllerBase<State> {
     const response = await this.usersApi.getUsers();
     if (!response.ok) {
       this.dispatch(
-        updateStoreSlice(UserStore)({
+        updateStoreSlice(UserSlice)({
           usersAreLoading: false,
         })
       );
@@ -49,7 +49,7 @@ class UserController extends ControllerBase<State> {
     });
 
     this.dispatch(
-      updateStoreSlice(UserStore)({
+      updateStoreSlice(UserSlice)({
         users: updatedUsers,
         usersAreLoading: false,
       })
@@ -64,12 +64,21 @@ class UserController extends ControllerBase<State> {
     const user = users.get(userId);
     if (user) {
       this.dispatch(
-        updateStoreSlice(UserStore)({
+        updateStoreSlice(UserSlice)({
           openedUser: user,
         })
       );
     }
   }
+
+  @reducer
+  clearUser = () => {
+    this.dispatch(
+      updateStoreSlice(UserSlice)({
+        openedUser: null,
+      })
+    );
+  };
 
   @reducer
   showErrorToast(action: Action<{ error: string }>) {

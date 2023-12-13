@@ -2,7 +2,7 @@ import { storeSlice } from 'redux-controller-middleware';
 import { User } from '../types/User.js';
 
 @storeSlice
-export class UserStore {
+export class UserSlice {
   users: Map<User['userId'], User>;
   openedUser: User | null;
   usersAreLoading: boolean;
