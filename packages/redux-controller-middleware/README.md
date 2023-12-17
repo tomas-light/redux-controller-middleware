@@ -195,7 +195,7 @@ class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> 
   }
 }
 
-// this type casting is required, because decorator can't change signature of the class =(
+// this type casting is required because the decorator can't change the signature of the class =(
 const userController = UsersController as unknown as WatchedController<UsersController>;
 export { userController as UsersController };
 ```
@@ -224,7 +224,7 @@ const Users = () => {
 
 ## <a name="dependency-injection"></a> Dependency injection
 
-To use dependency injection you need provide `container` to `controllerMiddleware` function. Read more on <a href="https://github.com/tomas-light/cheap-di/tree/master/packages/cheap-di">cheap-di</a> README page
+To use dependency injection, you need to provide `container` to `controllerMiddleware` function. Read more on <a href="https://github.com/tomas-light/cheap-di/tree/master/packages/cheap-di">cheap-di</a> README page
 
 ```ts
 // store.ts
@@ -324,7 +324,7 @@ export const fetchUsers = createReducer('fetchUsers', async ({ container, dispat
 });
 ```
 
-> **_NOTE:_** such instantiation technic is called Service Locator and it is counted as anti-pattern, that is why we recommend to use <a href="#dependency-injection-oop">OOP variant</a> of dependency injection.
+> **_NOTE:_** such instantiation technic is called Service Locator, and it is counted as anti-pattern that is why we recommend using the <a href="#dependency-injection-oop">OOP variant</a> of dependency injection.
 
 ### <a name="dependency-injection-oop"></a> OOP variant
 
@@ -365,7 +365,7 @@ class UsersController extends ControllerBase<UsersSlice> {
   }
 }
 
-// this type casting is required, because decorator can't change signature of the class =(
+// this type casting is required because the decorator can't change the signature of the class =(
 const userController = UsersController as unknown as WatchedController<UsersController>;
 export { userController as UsersController };
 ```
@@ -383,8 +383,7 @@ const loadUser = (data: { userID: string }) => createAction('load user', data);
 
 ### <a name="chaining-action"></a> Chaining actions
 
-You can chain action one by one:
-
+You can chain actions one by one:
 ```tsx
 import { useDispatch } from 'react-redux';
 import { chainActions } from 'redux-controller-middleware';
