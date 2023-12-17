@@ -1,0 +1,1 @@
+{"version":3,"file":"StaticActionsCreator.js","sourceRoot":"","sources":["../../../redux-controller-middleware/src/types/StaticActionsCreator.ts"],"names":[],"mappings":"","sourcesContent":["import { Action } from './Action.js';\n\nexport type StaticActionsCreator = {\n  [actionName: string]: (payload?: any) => Action;\n};\n"]}

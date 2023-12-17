@@ -3,3 +3,5 @@
 **/dist/
 **/.yarn
 **/test-coverage
+
+!packages/dist

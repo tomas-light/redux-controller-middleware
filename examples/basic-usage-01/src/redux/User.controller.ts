@@ -2,18 +2,17 @@ import {
   Action,
   ControllerBase,
   Middleware,
-  updateStoreSlice,
   controller,
   reducer,
   WatchedController,
-} from 'redux-controller-middleware';
+} from '@redux-controller-middleware/src';
 import { UserApi } from '../api/UserApi.js';
 import { State } from '../configureReduxStore.js';
 import { User } from '../types/User.js';
 import { UserSlice } from './User.slice.js';
 
 @controller
-class UserController extends ControllerBase<InstanceType<UserSlice>, UserSlice, State> {
+class UserController extends ControllerBase<UserSlice, State> {
   constructor(
     middleware: Middleware<State>,
     private readonly usersApi: UserApi
@@ -23,19 +22,15 @@ class UserController extends ControllerBase<InstanceType<UserSlice>, UserSlice, 
 
   @reducer
   async loadUsers() {
-    this.dispatch(
-      updateStoreSlice(UserSlice)({
-        usersAreLoading: true,
-      })
-    );
+    this.updateStoreSlice({
+      usersAreLoading: true,
+    });
 
     const response = await this.usersApi.getUsers();
     if (!response.ok) {
-      this.dispatch(
-        updateStoreSlice(UserSlice)({
-          usersAreLoading: false,
-        })
-      );
+      this.updateStoreSlice({
+        usersAreLoading: false,
+      });
       // call action creator of the controller from itself
       this.dispatch(userController.showErrorToast({ error: 'Oops! Something went wrong...' }));
       return;
@@ -48,12 +43,10 @@ class UserController extends ControllerBase<InstanceType<UserSlice>, UserSlice, 
       updatedUsers.set(user.userId, user);
     });
 
-    this.dispatch(
-      updateStoreSlice(UserSlice)({
-        users: updatedUsers,
-        usersAreLoading: false,
-      })
-    );
+    this.updateStoreSlice({
+      users: updatedUsers,
+      usersAreLoading: false,
+    });
   }
 
   @reducer
@@ -63,21 +56,17 @@ class UserController extends ControllerBase<InstanceType<UserSlice>, UserSlice, 
 
     const user = users.get(userId);
     if (user) {
-      this.dispatch(
-        updateStoreSlice(UserSlice)({
-          openedUser: user,
-        })
-      );
+      this.updateStoreSlice({
+        openedUser: user,
+      });
     }
   }
 
   @reducer
   clearUser = () => {
-    this.dispatch(
-      updateStoreSlice(UserSlice)({
-        openedUser: null,
-      })
-    );
+    this.updateStoreSlice({
+      openedUser: null,
+    });
   };
 
   @reducer

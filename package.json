@@ -1,3 +1,3 @@
 {
-  "workspaces": ["lib", "examples/*"]
+  "workspaces": ["packages/*", "examples/*"]
 }

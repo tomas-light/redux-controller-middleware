@@ -6,12 +6,12 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.0.1",
-    "cheap-di": "^4.0.0-rc-32",
+    "cheap-di": "^4.0.0-rc-33",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
     "redux": "^5.0.0",
-    "redux-controller-middleware": "3.0.0-rc.1"
+    "@redux-controller-middleware/src": "3.0.0-rc.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",

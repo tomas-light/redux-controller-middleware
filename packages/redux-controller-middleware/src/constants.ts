@@ -1,4 +1,5 @@
 import { Dispatch, MiddlewareAPI } from 'redux';
+import type { Container } from 'cheap-di';
 import { Action, Constructor } from './types/index.js';
 
 export type ControllerMethodMap = Map<
@@ -8,6 +9,7 @@ export type ControllerMethodMap = Map<
 
 export type ActionReducerParameters<Payload, State = unknown> = MiddlewareAPI<Dispatch, State> & {
   action: Action<Payload>;
+  container: Pick<Container, 'resolve'> | undefined;
 };
 export type ActionReducer<Payload, State> = (parameters: ActionReducerParameters<Payload, State>) => any;
 

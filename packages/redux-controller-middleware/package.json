@@ -1,7 +1,22 @@
 {
-  "name": "redux-controller-middleware",
+  "name": "@redux-controller-middleware/src",
   "version": "3.0.0-rc.1",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
+  "author": "tomas-light",
+  "repository": "git@github.com/tomas-light/redux-controller-middleware.git",
+  "license": "MIT",
+  "contributors": [
+    "Artem Ignatev <art.ser.ignatiev@gmail.com>"
+  ],
+  "homepage": "https://github.com/tomas-light/redux-controller-middleware/tree/master/packages/redux-controller-middleware#readme",
+  "bugs": "https://github.com/tomas-light/redux-controller-middleware/issues",
+  "keywords": [
+    "redux dependency injection",
+    "redux cheap-di",
+    "redux controller middleware",
+    "redux controller di",
+    "redux middleware"
+  ],
   "scripts": {
     "compile": "tsc --build tsconfig.cjs.json ./tsconfig.esm.json ./tsconfig.types.json",
     "prepare-package-json": "ts-node scripts/prepare-package-json.ts",
@@ -16,7 +31,7 @@
     "@types/node": "^20.10.4",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
     "@typescript-eslint/parser": "^6.14.0",
-    "cheap-di": "^4.0.0-rc-32",
+    "cheap-di": "^4.0.0-rc-33",
     "cheap-di-react": "^4.1.0-rc-32",
     "eslint": "^8.55.0",
     "eslint-plugin-sonarjs": "^0.23.0",
@@ -34,28 +49,27 @@
     "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "cheap-di": ">= 4.0.0-rc-32",
+    "cheap-di": ">= 4.0.0-rc-33",
     "cheap-di-react": ">= 4.1.0-rc-32",
     "react": ">= 18.2.0",
     "react-dom": ">= 18.2.0",
     "react-redux": ">= 9.0.0",
     "redux": ">= 5.0.0"
   },
-  "files": ["dist/**/*", "package.json", "README.md", "LICENSE"],
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
-  "contributors": [
-    "Artem Ignatev <art.ser.ignatiev@gmail.com>"
-  ],
-  "author": "tomas-light",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tomas-light/redux-controller-middleware.git"
-  },
-  "homepage": "https://github.com/tomas-light/redux-controller-middleware#readme",
-  "bugs": {
-    "url": "https://github.com/tomas-light/redux-controller-middleware/issues"
-  },
-  "license": "MIT"
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "build-instructions": {
+    "name": "redux-controller-middleware",
+    "files": [
+      "cjs/**/*",
+      "esm/**/*",
+      "types/**/*",
+      "package.json",
+      "README.md",
+      "LICENSE"
+    ],
+    "main": "./cjs/index.js",
+    "module": "./esm/index.js",
+    "types": "./types/index.d.ts"
+  }
 }

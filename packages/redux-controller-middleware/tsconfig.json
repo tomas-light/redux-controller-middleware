@@ -18,7 +18,7 @@
     "moduleResolution": "node",
     "noErrorTruncation": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "./dist",
+    "outDir": "../dist",
     "pretty": true,
     "rootDir": "src",
     "skipLibCheck": true,
@@ -32,7 +32,5 @@
     "dist",
     "src/**/*.test.ts"
   ],
-  "include": [
-    "src"
-  ]
+  "include": ["src", "scripts"]
 }

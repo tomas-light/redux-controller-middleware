@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { container } from 'cheap-di';
 import { combineReducers } from 'redux';
-import { controllerMiddleware, getReducersFromStoreSlices, InferState } from 'redux-controller-middleware';
+import { controllerMiddleware, getReducersFromStoreSlices, InferState } from '@redux-controller-middleware/src';
 import { UserSlice } from './redux/User.slice.js';
 
 function makeReducers() {

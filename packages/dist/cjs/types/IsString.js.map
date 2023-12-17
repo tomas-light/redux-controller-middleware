@@ -1,0 +1,1 @@
+{"version":3,"file":"IsString.js","sourceRoot":"","sources":["../../../redux-controller-middleware/src/types/IsString.ts"],"names":[],"mappings":"","sourcesContent":["export type IsString<Type> = Type extends string ? Type : never;\n"]}

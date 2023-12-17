@@ -7,16 +7,19 @@ import { Middleware } from '../Middleware.js';
 import { Action, isAction } from '../types/index.js';
 
 type ControllerMiddlewareOptions = {
-  getContainer?: () => Container;
+  container?: Container | (() => Container);
 };
 
 function controllerMiddleware<State, _DispatchExt = {}>(
   options: ControllerMiddlewareOptions = {}
 ): ReduxMiddleware<_DispatchExt, State, Dispatch> {
   return (middlewareAPI) => {
-    const container = options?.getContainer?.();
-    if (container) {
-      container.registerInstance(middlewareAPI).as(Middleware);
+    if (options?.container) {
+      if (typeof options.container === 'function') {
+        options.container().registerInstance(middlewareAPI).as(Middleware);
+      } else {
+        options.container.registerInstance(middlewareAPI).as(Middleware);
+      }
     }
 
     return (next) => {
@@ -44,13 +47,13 @@ async function handleAction<State>(
     action: Action<unknown>;
   }
 ) {
-  const { getContainer, middlewareAPI, action } = params;
+  const { container, middlewareAPI, action } = params;
 
   const actionReducer = actionToControllerMap.get(action.type);
   if (actionReducer) {
     await callActionReducer({
       middlewareAPI,
-      getContainer,
+      container,
       actionReducer,
       action,
     });

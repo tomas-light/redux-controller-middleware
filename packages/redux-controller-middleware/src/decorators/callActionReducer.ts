@@ -6,7 +6,7 @@ import { Action } from '../types/index.js';
 
 type Parameters<Payload = undefined, State = unknown> = {
   action: Action<Payload>;
-  getContainer?: () => DependencyResolver;
+  container?: DependencyResolver | (() => DependencyResolver);
   actionReducer: ActionReducerOrControllerMethod<Payload, State>;
   middlewareAPI: MiddlewareAPI;
 };
@@ -15,24 +15,24 @@ export async function callActionReducer<Payload = undefined, State = unknown>(pa
   const {
     //
     action,
-    getContainer,
     actionReducer,
     middlewareAPI,
   } = parameters;
+
+  const container = tryToFindDependencyContainer(action, parameters.container);
 
   if (typeof actionReducer === 'function') {
     try {
       await actionReducer({
         ...middlewareAPI,
         action,
+        container,
       });
     } catch (error) {
       console.error('Unhandled exception in action reducer', error);
     }
     return;
   }
-
-  const container = tryToFindDependencyContainer(action, getContainer);
 
   for await (const [controllerConstructor, methodName] of actionReducer) {
     let controller: Record<string, (action: Action<unknown>) => any>;
