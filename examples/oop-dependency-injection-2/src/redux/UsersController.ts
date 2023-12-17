@@ -1,4 +1,3 @@
-import { inject } from 'cheap-di';
 import {
   controller,
   ControllerBase,
@@ -14,7 +13,6 @@ export class UsersSlice {
   usersList: string[] = [];
 }
 
-@inject(Middleware, UserApi)
 @controller
 class UsersController extends ControllerBase<UsersSlice> {
   constructor(

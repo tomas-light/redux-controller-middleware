@@ -1,12 +1,9 @@
-import { inject } from 'cheap-di';
-
 export class Logger {
   log(...messages: unknown[]) {
     console.log(...messages);
   }
 }
 
-@inject(Logger)
 export class UserApi {
   constructor(private logger: Logger) {}
 

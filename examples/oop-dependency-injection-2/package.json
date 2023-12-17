@@ -1,5 +1,5 @@
 {
-  "name": "@examples/oop-dependency-injection-2",
+  "name": "@examples/oop-dependency-injection",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -19,6 +19,7 @@
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
+    "cheap-di-ts-transform": "^1.0.0-rc-32",
     "typescript": "^5.3.3",
     "tslib": "^2.6.2",
     "vite": "^5.0.10"
