@@ -13,12 +13,12 @@ import { User } from '../types/User.js';
 import { UserSlice } from './User.slice.js';
 
 @controller
-class UserController extends ControllerBase<State> {
+class UserController extends ControllerBase<InstanceType<UserSlice>, UserSlice, State> {
   constructor(
     middleware: Middleware<State>,
     private readonly usersApi: UserApi
   ) {
-    super(middleware);
+    super(middleware, UserSlice);
   }
 
   @reducer
