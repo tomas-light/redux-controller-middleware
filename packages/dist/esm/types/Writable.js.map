@@ -1,0 +1,1 @@
+{"version":3,"file":"Writable.js","sourceRoot":"","sources":["../../../redux-controller-middleware/src/types/Writable.ts"],"names":[],"mappings":"","sourcesContent":["export type Writable<T> = {\n  -readonly [key in keyof T]: T[key];\n};\n"]}

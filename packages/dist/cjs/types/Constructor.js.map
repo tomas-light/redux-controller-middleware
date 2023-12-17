@@ -1,0 +1,1 @@
+{"version":3,"file":"Constructor.js","sourceRoot":"","sources":["../../../redux-controller-middleware/src/types/Constructor.ts"],"names":[],"mappings":"","sourcesContent":["export type Constructor<T = any> = new (...args: any[]) => T;\n"]}

@@ -1,0 +1,27 @@
+{
+  "name": "@examples/oop-dependency-injection",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "dependencies": {
+    "redux-controller-middleware": "3.0.0-rc.1",
+    "@reduxjs/toolkit": "^2.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "redux": "^5.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "cheap-di-ts-transform": "^1.0.0-rc-32",
+    "typescript": "^5.3.3",
+    "tslib": "^2.6.2",
+    "vite": "^5.0.10"
+  }
+}
