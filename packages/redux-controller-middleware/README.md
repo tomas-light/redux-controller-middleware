@@ -182,10 +182,14 @@ class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> 
 
   @reducer
   async addUser(action: Action<{ name: string }>) {
-    const newUser = await Promise.resolve().then(() => ({
-      userId: new Date().valueOf().toString(),
-      userName: action.payload.name,
-    }));
+    const newUserResponse = await fetch('/api/user', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: action.payload.name
+      })
+    });
+
+    const newUser = await newUserResponse.json();
 
     const { usersList } = this.getState().users;
 
@@ -253,12 +257,12 @@ export class Logger {
 }
 
 export class UserApi {
-	constructor(private logger: Logger) {
-	}
+	constructor(private logger: Logger) {}
 
 	async get() {
 		this.logger.log('[my api] fetching users list');
-		return ['user-1', 'user-2'];
+		const response = await fetch('/api/user');
+		return response.json();
 	}
 }
 // services.ts
@@ -276,17 +280,17 @@ export class Logger {
 
 @inject(Logger)
 export class UserApi {
-  constructor(private logger: Logger) {
-  }
+  constructor(private logger: Logger) {}
 
   async get() {
     this.logger.log('[my api] fetching users list');
-    return ['user-1', 'user-2'];
+    const response = await fetch('/api/user');
+    return response.json();
   }
 }
 ```
 
-> **_NOTE:_** you need to adjust tsconfig.json to use stage 2 decorators:
+> **_NOTE:_** To use stage 2 decorators, you need to adjust your tsconfig.json like this:
 > ```json
 > {
 >   "compilerOptions": {
@@ -295,6 +299,7 @@ export class UserApi {
 >   }
 > }
 > ```
+> To use stage 3 decorators, you don't need extra setup.
 
 ### <a name="dependency-injection-functional"></a> Functional variant
 
