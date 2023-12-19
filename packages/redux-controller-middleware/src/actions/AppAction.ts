@@ -9,7 +9,6 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
   readonly actions: (ActionFactory | Action<unknown>)[];
 
   stopPropagation: boolean;
-
   container?: Container;
 
   // implementation of UnknownAction

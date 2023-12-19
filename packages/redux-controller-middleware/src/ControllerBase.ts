@@ -23,11 +23,38 @@ export class ControllerBase<StoreSliceInstance, State extends Record<string, unk
     this.getState = () => middleware?.getState();
   }
 
-  protected updateStoreSlice(partialStore: Partial<StoreSliceInstance>) {
-    if (!this.storeSlice) {
+  /**
+   * You may wait until the store will be updated.
+   *
+   * There is setTimeout(() => resolve) called before returning changed slice in slice reducer.
+   *
+   * So we assume, the action will be resolved after changes will be applied to the redux state
+   * @example
+   *   \@reducer
+   *   async fetchUsers() {
+   *     const users = await this.userApi.get();
+   *
+   *     await this.updateStoreSlice({
+   *       usersList: users,
+   *     });
+   *
+   *     console.log('executed');
+   *
+   *     const { usersList } = this.getState().users;
+   *     console.log(`list is updated ${usersList === users}`);
+   *   }
+   * */
+  protected async updateStoreSlice(partialStore: Partial<StoreSliceInstance>) {
+    const { storeSlice } = this;
+
+    if (!storeSlice) {
       throw new Error('You have to pass storeSlice to ControllerBase\'s "super" to use "this.updateStoreSlice" method');
     }
 
-    this.dispatch(updateStoreSlice(this.storeSlice)(partialStore));
+    await new Promise<void>((resolve) => {
+      const action = updateStoreSlice(storeSlice)(partialStore);
+      action.executionCompleted = resolve;
+      this.dispatch(action);
+    });
   }
 }

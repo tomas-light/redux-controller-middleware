@@ -11,7 +11,7 @@
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.4",
     "redux": "^5.0.0",
-    "@redux-controller-middleware/src": "3.0.0-rc.1"
+    "redux-controller-middleware": "3.0.0-rc.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.5",

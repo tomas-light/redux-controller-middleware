@@ -23,11 +23,37 @@ let ControllerBase = ControllerBase_1 = class ControllerBase {
         this.dispatch = middleware?.dispatch;
         this.getState = () => middleware?.getState();
     }
-    updateStoreSlice(partialStore) {
-        if (!this.storeSlice) {
+    /**
+     * You may wait until the store will be updated.
+     *
+     * There is setTimeout(() => resolve) called before returning changed slice in slice reducer.
+     *
+     * So we assume, the action will be resolved after changes will be applied to the redux state
+     * @example
+     *   \@reducer
+     *   async fetchUsers() {
+     *     const users = await this.userApi.get();
+     *
+     *     await this.updateStoreSlice({
+     *       usersList: users,
+     *     });
+     *
+     *     console.log('executed');
+     *
+     *     const { usersList } = this.getState().users;
+     *     console.log(`list is updated ${usersList === users}`);
+     *   }
+     * */
+    async updateStoreSlice(partialStore) {
+        const { storeSlice } = this;
+        if (!storeSlice) {
             throw new Error('You have to pass storeSlice to ControllerBase\'s "super" to use "this.updateStoreSlice" method');
         }
-        this.dispatch((0, updateStoreSlice_js_1.updateStoreSlice)(this.storeSlice)(partialStore));
+        await new Promise((resolve) => {
+            const action = (0, updateStoreSlice_js_1.updateStoreSlice)(storeSlice)(partialStore);
+            action.executionCompleted = resolve;
+            this.dispatch(action);
+        });
     }
 };
 exports.ControllerBase = ControllerBase;

@@ -364,9 +364,15 @@ class UsersController extends ControllerBase<UsersSlice> {
   async fetchUsers() {
     const users = await this.userApi.get();
 
-    this.updateStoreSlice({
+		// you also may wait untill the update will be applied to the redux state, if you need it
+    await this.updateStoreSlice({
       usersList: users,
     });
+
+    console.log('executed');
+
+    const { usersList } = this.getState().users;
+    console.log(`list is updated ${usersList === users}`); // true
   }
 }
 

@@ -26,10 +26,15 @@ export interface Action<Payload = undefined> extends UnknownAction {
   /** returns `next actions chain of this action */
   // getActions(): Action['actions'];
 
-  /** if action has next actions, the middleware will add promise resolving
+  /**
+   * if action has next actions, the middleware will add promise resolving
    * to this property, that will be triggered after all next action will be handled.
    * It is signal for the middleware: this action was handled, and we can take
-   * next action in a chain */
+   * next action in a chain.
+   *
+   * Also, it is used for store updating, if you would like to wait till store was updated and then do some work dependent on it.
+   * Such resolving is settled only in ControllerBase.updateStoreSlice method
+   * */
   executionCompleted?: () => void;
 }
 
