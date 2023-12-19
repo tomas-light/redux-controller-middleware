@@ -1,6 +1,7 @@
 import { Reducer } from 'redux';
 import { createStoreSliceReducer } from '../createStoreSliceReducer.js';
 import { Action, Constructor } from '../types/index.js';
+import { makeActionType } from './makeActionType.js';
 
 export type DecoratedStoreSlice<
   StoreSlice,
@@ -30,12 +31,13 @@ export const storeSlice: StoreSliceDecorator = (<StoreSlice, StoreSliceConstruct
 
   const decoratedStoreSlice = constructor as DecoratedStoreSlice<StoreSlice, StoreSliceConstructor>;
 
-  // add action type for store updates
-  const updateStoreActionType = `${sanitizedClassName}_update_store`;
   const initialValues = new constructor();
 
-  decoratedStoreSlice.update = updateStoreActionType;
-  decoratedStoreSlice.reducer = createStoreSliceReducer(initialValues, updateStoreActionType);
+  decoratedStoreSlice.update = makeActionType({
+    controllerName: sanitizedClassName,
+    methodName: 'updateStore',
+  });
+  decoratedStoreSlice.reducer = createStoreSliceReducer(initialValues, decoratedStoreSlice.update);
 
   return decoratedStoreSlice;
 }) as StoreSliceDecorator;

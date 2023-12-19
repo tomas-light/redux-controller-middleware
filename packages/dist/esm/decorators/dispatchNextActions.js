@@ -1,4 +1,4 @@
-import { AppAction } from '../AppAction.js';
+import { AppAction } from '../actions/index.js';
 import { isAction } from '../types/index.js';
 export async function dispatchNextActions(middlewareAPI, action) {
     const nextActions = [...AppAction.getActions(action)];

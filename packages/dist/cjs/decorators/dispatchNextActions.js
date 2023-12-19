@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dispatchNextActions = void 0;
-const AppAction_js_1 = require("../AppAction.js");
-const index_js_1 = require("../types/index.js");
+const index_js_1 = require("../actions/index.js");
+const index_js_2 = require("../types/index.js");
 async function dispatchNextActions(middlewareAPI, action) {
-    const nextActions = [...AppAction_js_1.AppAction.getActions(action)];
+    const nextActions = [...index_js_1.AppAction.getActions(action)];
     while (nextActions.length) {
         const nextActionOrFactory = nextActions.shift();
         let nextAction;
@@ -23,7 +23,7 @@ async function dispatchNextActions(middlewareAPI, action) {
         else {
             nextAction = nextActionOrFactory;
         }
-        if (!(0, index_js_1.isAction)(nextAction)) {
+        if (!(0, index_js_2.isAction)(nextAction)) {
             // if it was just callback, no need additional processing
             continue;
         }

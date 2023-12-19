@@ -7,7 +7,7 @@
     "dev": "vite"
   },
   "dependencies": {
-    "redux-controller-middleware": "3.0.0-rc.1",
+    "redux-controller-middleware": "3.0.0-rc.2",
     "@reduxjs/toolkit": "^2.0.1",
     "cheap-di": "^4.0.0-rc-33",
     "react": "^18.2.0",

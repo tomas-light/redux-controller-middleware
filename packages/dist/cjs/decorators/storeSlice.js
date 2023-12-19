@@ -2,14 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isDecoratedStoreSlice = exports.storeSlice = void 0;
 const createStoreSliceReducer_js_1 = require("../createStoreSliceReducer.js");
+const makeActionType_js_1 = require("./makeActionType.js");
 exports.storeSlice = ((constructor) => {
     const sanitizedClassName = constructor.name.replaceAll('StoreSlice', '').replaceAll('Store', '');
     const decoratedStoreSlice = constructor;
-    // add action type for store updates
-    const updateStoreActionType = `${sanitizedClassName}_update_store`;
     const initialValues = new constructor();
-    decoratedStoreSlice.update = updateStoreActionType;
-    decoratedStoreSlice.reducer = (0, createStoreSliceReducer_js_1.createStoreSliceReducer)(initialValues, updateStoreActionType);
+    decoratedStoreSlice.update = (0, makeActionType_js_1.makeActionType)({
+        controllerName: sanitizedClassName,
+        methodName: 'updateStore',
+    });
+    decoratedStoreSlice.reducer = (0, createStoreSliceReducer_js_1.createStoreSliceReducer)(initialValues, decoratedStoreSlice.update);
     return decoratedStoreSlice;
 });
 function isDecoratedStoreSlice(storeSlice) {

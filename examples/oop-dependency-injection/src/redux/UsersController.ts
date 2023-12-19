@@ -16,7 +16,7 @@ export class UsersSlice {
 
 @inject(Middleware, UserApi)
 @controller
-class UsersController extends ControllerBase<UsersSlice> {
+class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> {
   constructor(
     middleware: Middleware,
     private readonly userApi: UserApi
@@ -28,9 +28,14 @@ class UsersController extends ControllerBase<UsersSlice> {
   async fetchUsers() {
     const users = await this.userApi.get();
 
-    this.updateStoreSlice({
+    await this.updateStoreSlice({
       usersList: users,
     });
+
+    console.log('executed');
+
+    const { usersList } = this.getState().users;
+    console.log(`list is updated ${usersList === users}`); // true
   }
 }
 

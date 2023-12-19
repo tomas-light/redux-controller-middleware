@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.controller = void 0;
+const createAction_js_1 = require("../actions/createAction.js");
 const constants_js_1 = require("../constants.js");
-const createAction_js_1 = require("../createAction.js");
 const makeActionType_js_1 = require("./makeActionType.js");
 /**
  * It registers your controller in the middleware. You need to add `@actionHandler` decorator to some of your methods

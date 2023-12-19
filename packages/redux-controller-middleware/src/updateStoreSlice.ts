@@ -1,4 +1,4 @@
-import { createAction } from './createAction.js';
+import { createAction } from './actions/index.js';
 import { isDecoratedStoreSlice } from './decorators/index.js';
 import { Constructor } from './types/index.js';
 

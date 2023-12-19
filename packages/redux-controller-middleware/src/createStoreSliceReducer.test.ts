@@ -1,4 +1,4 @@
-import { AppAction } from './AppAction.js';
+import { AppAction } from './actions/index.js';
 import { createStoreSliceReducer } from './createStoreSliceReducer.js';
 
 class Store {
