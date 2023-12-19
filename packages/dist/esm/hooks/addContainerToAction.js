@@ -1,5 +1,4 @@
-import { AppAction } from '../AppAction.js';
-import { createAction } from '../createAction.js';
+import { AppAction, createAction } from '../actions/index.js';
 function addContainerToAction(action, diContext) {
     if (!diContext.container) {
         return action;

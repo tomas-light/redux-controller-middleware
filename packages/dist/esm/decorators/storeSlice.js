@@ -1,12 +1,14 @@
 import { createStoreSliceReducer } from '../createStoreSliceReducer.js';
+import { makeActionType } from './makeActionType.js';
 export const storeSlice = ((constructor) => {
     const sanitizedClassName = constructor.name.replaceAll('StoreSlice', '').replaceAll('Store', '');
     const decoratedStoreSlice = constructor;
-    // add action type for store updates
-    const updateStoreActionType = `${sanitizedClassName}_update_store`;
     const initialValues = new constructor();
-    decoratedStoreSlice.update = updateStoreActionType;
-    decoratedStoreSlice.reducer = createStoreSliceReducer(initialValues, updateStoreActionType);
+    decoratedStoreSlice.update = makeActionType({
+        controllerName: sanitizedClassName,
+        methodName: 'updateStore',
+    });
+    decoratedStoreSlice.reducer = createStoreSliceReducer(initialValues, decoratedStoreSlice.update);
     return decoratedStoreSlice;
 });
 export function isDecoratedStoreSlice(storeSlice) {

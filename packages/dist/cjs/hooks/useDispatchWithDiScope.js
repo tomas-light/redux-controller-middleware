@@ -5,7 +5,10 @@ const cheap_di_react_1 = require("cheap-di-react");
 const react_1 = require("react");
 const react_redux_1 = require("react-redux");
 const addContainerToAction_js_1 = require("./addContainerToAction.js");
-/** Warning! it is experimental hook, we don't recommend to use it */
+/**
+ * Warning! it is experimental hook, we don't recommend to use it
+ * adds current container scope (from React.Context) to dispatched action to resolve all dependencies from its scope
+ * */
 function useDispatchWithDiScope() {
     const dispatch = (0, react_redux_1.useDispatch)();
     const diContext = (0, cheap_di_react_1.useDiContext)();

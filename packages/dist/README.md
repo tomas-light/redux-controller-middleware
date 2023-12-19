@@ -13,6 +13,7 @@ Adjust Redux middleware to be able to use controllers with Dependency Injection 
   * [OOP approach](#oop-approach)
   * [Dependency injection](#dependency-injection)
     * [Functional variant](#dependency-injection-functional)
+    * [OOP variant](#dependency-injection-oop)
   * [createAction](#createAction)
   * [Chaining actions](#chaining-action)
 
@@ -146,6 +147,11 @@ export type RootState = InferState<ReturnType<typeof makeReducers>>;
 
 ### <a name="oop-approach"></a> OOP approach
 
+> **_NOTE:_**
+> Controller - is a place for a piece of logic in your application.
+> The differences from Saga (in `redux-saga`) is your methods is not static!
+> It allows you to use dependency injection technics and simplify tests.
+
 ```ts
 // UsersController.ts
 import {
@@ -176,10 +182,14 @@ class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> 
 
   @reducer
   async addUser(action: Action<{ name: string }>) {
-    const newUser = await Promise.resolve().then(() => ({
-      userId: new Date().valueOf().toString(),
-      userName: action.payload.name,
-    }));
+    const newUserResponse = await fetch('/api/user', {
+      method: 'POST',
+      body: JSON.stringify({
+        username: action.payload.name
+      })
+    });
+
+    const newUser = await newUserResponse.json();
 
     const { usersList } = this.getState().users;
 
@@ -189,7 +199,7 @@ class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> 
   }
 }
 
-// this type casting is required, because decorator can't change signature of the class =(
+// this type casting is required because the decorator can't change the signature of the class =(
 const userController = UsersController as unknown as WatchedController<UsersController>;
 export { userController as UsersController };
 ```
@@ -218,9 +228,7 @@ const Users = () => {
 
 ## <a name="dependency-injection"></a> Dependency injection
 
-### <a name="dependency-injection-functional"></a> Functional variant
-
-To use dependency injection you need provide `getContainer` to `controllerMiddleware` function. Read more on <a href="https://github.com/tomas-light/cheap-di/tree/master/packages/cheap-di">cheap-di</a> README page
+To use dependency injection, you need to provide `container` to `controllerMiddleware` function. Read more on <a href="https://github.com/tomas-light/cheap-di/tree/master/packages/cheap-di">cheap-di</a> README page
 
 ```ts
 // store.ts
@@ -230,45 +238,59 @@ import { controllerMiddleware } from 'redux-controller-middleware';
 
 export const store = configureStore({
   reducer: {},
-  // add redux-controller-middleware to redux
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false, // disables warnings on chaining functions in Action
-    }).concat(
+    getDefaultMiddleware().concat(
       controllerMiddleware({
-        getContainer: () => container,
+        container,
       })
     ),
 });
 ```
 
-
-Controller - is a place for a piece of logic in your application.
-The differences from Saga (in `redux-saga`) is your methods is not static!
-It allows you to use dependency injection technics and simplify tests.
-
-You can also register DI container, that allows you to inject services in controllers.
+Configure <a href="https://github.com/tomas-light/cheap-di/tree/master/packages/cheap-di-ts-transform">cheap-di-ts-transform</a> to generate dependencies metadata.
 ```ts
-// configureReduxStore.ts
-import { configureStore } from '@reduxjs/toolkit';
-import { container } from 'cheap-di';
-import { controllerMiddleware } from 'redux-controller-middleware';
+// services.ts
+export class Logger {
+  log(...messages: unknown[]) {
+    console.log(...messages);
+  }
+}
 
-export function configureReduxStore() {
-  const middleware = controllerMiddleware<State>({
-    // use cheap-di container for Dependency Injection
-    getContainer: () => container,
-  });
+export class UserApi {
+	constructor(private logger: Logger) {}
 
-  return configureStore({
-    // ...
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(middleware),
-  });
+	async get() {
+		this.logger.log('[my api] fetching users list');
+		const response = await fetch('/api/user');
+		return response.json();
+	}
+}
+// services.ts
+```
+
+Or use `@inject` decorator to register dependencies yourself
+```ts
+import { inject } from 'cheap-di';
+
+export class Logger {
+  log(...messages: unknown[]) {
+    console.log(...messages);
+  }
+}
+
+@inject(Logger)
+export class UserApi {
+  constructor(private logger: Logger) {}
+
+  async get() {
+    this.logger.log('[my api] fetching users list');
+    const response = await fetch('/api/user');
+    return response.json();
+  }
 }
 ```
 
-> **_NOTE:_** you need to adjust tsconfig.json to use stage 2 decorators:
+> **_NOTE:_** To use stage 2 decorators, you need to adjust your tsconfig.json like this:
 > ```json
 > {
 >   "compilerOptions": {
@@ -277,168 +299,102 @@ export function configureReduxStore() {
 >   }
 > }
 > ```
+> To use stage 3 decorators, you don't need extra setup.
 
-Create a controller to encapsulate a piece of application logic.
+### <a name="dependency-injection-functional"></a> Functional variant
+
+You may instantiate the service inside your reducer like this:
+```ts
+import { createReducer, storeSlice, updateStoreSlice } from 'redux-controller-middleware';
+import { UserApi } from './services.ts';
+
+@storeSlice
+export class UsersSlice {
+  usersList: string[] = [];
+}
+
+export const fetchUsers = createReducer('fetchUsers', async ({ container, dispatch }) => {
+  const userApi = container?.resolve(UserApi);
+  if (!userApi) {
+    return;
+  }
+
+  const users = await userApi.get();
+
+  dispatch(
+    updateStoreSlice(UsersSlice)({
+      usersList: users,
+    })
+  );
+});
+```
+
+> **_NOTE:_** such instantiation technic is called Service Locator, and it is counted as anti-pattern that is why we recommend using the <a href="#dependency-injection-oop">OOP variant</a> of dependency injection.
+
+### <a name="dependency-injection-oop"></a> OOP variant
+
+Controller gets its dependencies automatically from middleware
 ```ts
 // User.controller.ts
-import { createAction, ControllerBase, controller, reducer, updateStore } from 'redux-controller-middleware';
-import { State } from './configureReduxStore';
-import { UsersSlice } from './Users.slice';
+import {
+  controller,
+  ControllerBase,
+  Middleware,
+  reducer,
+  storeSlice,
+  WatchedController,
+} from 'redux-controller-middleware';
+import { UserApi } from './services.ts';
 
-// prepare the class to use static methods for creating of actions
-@controller
-export class UserController extends ControllerBase<State> {
-  // add action creator with name of the method: { type: 'loadUserList' }
-  @reducer
-  async loadUserList() {
-    this.dispatch(
-      updateStore(UsersSlice)({
-        usersAreLoading: true,
-      })
-    );
-
-    const response = await fetch('/api/users');
-    if (!response.ok) {
-      this.dispatch(
-        updateStore(UsersSlice)({
-          usersAreLoading: false,
-        })
-      );
-
-      // show error notification or something else
-      return;
-    }
-
-    const users = await response.json();
-
-    this.dispatch(
-      updateStore(UsersSlice)({
-        usersAreLoading: false,
-        users,
-      })
-    );
-  }
-  
-  @reducer loadProfile(action: Action<{ userID: string }>) {/*...*/}
-  @reducer loadSomethingElse() {/*...*/}
+@storeSlice
+export class UsersSlice {
+  usersList: string[] = [];
 }
-
-// there are restrictions from decorators in TS - it cannot to change type of the decorated class,
-// so we should manually cast types
-// WatchedController takes all public methods of the class and adds type definition for static action creators
-const userController = UserController as unknown as WatchedController<UserController>;
-export { userController as UserController };
-```
-
-And now you can dispatch the controller actions from a component.
-```tsx
-import { useDispatch } from 'react-redux';
-import { UserController } from './User.controller';
-
-const App = () => {
-  const dispatch = useDispatch();
-  
-  useEffect(() => {
-    // create action and dispatch it in one line
-    dispatch(UserController.loadUsers());
-    dispatch(UserController.loadProfile({ userID: '123' }));
-  }, []);
-
-  return /* you layout */;
-};
-```
-
-### <a name="dependency-injection"></a> Dependency injection
-
-```ts
-// api.ts
-export class UserApi {
-  loadUsers() {
-    return fetch('/api/users');
-  }
-}
-
-export abstract class AccessKey {
-  abstract key: string;
-}
-
-export class UserStorage {
-  constructor(private readonly accessKey: AccessKey) {}
-  
-  store(value: string) {
-    localStorage.set(this.accessKey.key, value);
-  }
-}
-```
-
-```ts
-// App.tsx
-import { container } from 'cheap-di';
-import { useEffect } from 'react';
-import { AccessKey } from './api';
-
-const App = () => {
-  useEffect(() => {
-    container.registerInstance({ key: 'my-secure-key' }).as(AccessKey);
-  }, []);
-
-  return /* your layout */;
-}
-```
-
-```ts
-// User.controller.ts
-import { ControllerBase, Middleware, controller, reducer, updateStore } from 'redux-controller-middleware';
-import { UserApi, UserStorage } from './api';
-import { State } from './configureReduxStore';
 
 @controller
-export class UserController extends ControllerBase<State> {
+class UsersController extends ControllerBase<UsersSlice> {
   constructor(
-    middleware: Middleware<State>,
-    private readonly api: UserApi, // will be instantiated automaticly
-    private readonly storage: UserStorage // will be instantiated with registered AccessKey
+    middleware: Middleware,
+    private readonly userApi: UserApi
   ) {
-    super(middleware);
+    super(middleware, UsersSlice);
   }
 
   @reducer
-  async loadUserList() {
-    const response = await this.api.loadUsers();
-    this.storage.store(response.data);
-    // ...
+  async fetchUsers() {
+    const users = await this.userApi.get();
+
+    this.updateStoreSlice({
+      usersList: users,
+    });
   }
 }
 
-const userController = UserController as unknown as WatchedController<UserController>;
-export { userController as UserController };
+// this type casting is required because the decorator can't change the signature of the class =(
+const userController = UsersController as unknown as WatchedController<UsersController>;
+export { userController as UsersController };
 ```
 
 ### <a name="create-action"></a> createAction
 
-You can define action creators by yourself;
+You can define action creators yourself:
 ```ts
 import { createAction } from 'redux-controller-middleware';
 
-export class UsersActions {
-  static LOAD_USER_LIST = 'LOAD_USER_LIST';
-  static loadUserList = () => createAction(UsersActions.LOAD_USER_LIST);
+const loadUserList = () => createAction('load user list');
 
-  static LOAD_USER = 'LOAD_USER';
-  static loadUser = (data: { userID: string }) => createAction(UsersActions.LOAD_USER, data);
-}
+const loadUser = (data: { userID: string }) => createAction('load user', data);
 ```
 
 ### <a name="chaining-action"></a> Chaining actions
 
-You can chain action one by one:
-
+You can chain actions one by one:
 ```tsx
 import { useDispatch } from 'react-redux';
 import { chainActions } from 'redux-controller-middleware';
 import { UserController } from './User.controller';
 
-const UserList = () => {
+const Page = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
