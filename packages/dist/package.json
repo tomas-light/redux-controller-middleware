@@ -1,6 +1,6 @@
 {
   "name": "redux-controller-middleware",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
   "author": "tomas-light",
   "repository": "git@github.com/tomas-light/redux-controller-middleware.git",
@@ -18,8 +18,8 @@
     "redux middleware"
   ],
   "peerDependencies": {
-    "cheap-di": ">= 4.0.0-rc-33",
-    "cheap-di-react": ">= 4.1.0-rc-32",
+    "cheap-di": ">= 4.0.1",
+    "cheap-di-react": ">= 4.1.0",
     "react": ">= 18.2.0",
     "react-dom": ">= 18.2.0",
     "react-redux": ">= 9.0.0",
