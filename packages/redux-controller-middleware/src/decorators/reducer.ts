@@ -1,5 +1,5 @@
 import { methodNamesTemporaryBox } from '../constants.js';
-import { Action } from '../types/index.js';
+import type { Action } from '../types/index.js';
 
 export interface ReducerMethodDecorator {
   // stage 3 decorator

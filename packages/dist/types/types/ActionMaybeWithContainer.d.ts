@@ -1,5 +1,5 @@
-import { Container } from 'cheap-di';
-import { Action } from './Action.js';
+import type { Container } from 'cheap-di';
+import type { Action } from './Action.js';
 export interface ActionMaybeWithContainer<Payload = undefined> extends Action<Payload> {
     container?: Container;
 }

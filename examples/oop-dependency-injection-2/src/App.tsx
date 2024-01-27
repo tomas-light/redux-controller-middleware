@@ -13,10 +13,12 @@ export default function App() {
 
 const Page = () => {
   const dispatch = useDispatch();
-  const { usersList } = useAppSelector((state) => state.users);
+  const { usersList, usersAreLoading } = useAppSelector((state) => state.users);
 
   return (
     <div>
+      {usersAreLoading && <h3>Loading...</h3>}
+
       <div>
         {usersList.map((userName, index) => (
           <p key={index + userName}>{userName}</p>
@@ -24,7 +26,7 @@ const Page = () => {
       </div>
 
       <button
-        onClick={() => {
+        onClick={async () => {
           dispatch(UsersController.fetchUsers());
         }}
       >

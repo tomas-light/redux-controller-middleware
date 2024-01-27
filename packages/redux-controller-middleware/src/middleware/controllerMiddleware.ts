@@ -1,8 +1,9 @@
-import { Container } from 'cheap-di';
-import { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
+import { type Container } from 'cheap-di';
+import type { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
+import { actionPromises } from '../actionPromises.js';
 import { actionToControllerMap } from '../constants.js';
 import { dispatchNextActions } from '../decorators/dispatchNextActions.js';
-import { Action, isAction } from '../types/index.js';
+import { type Action, isAction } from '../types/index.js';
 import { callActionReducer } from './callActionReducer.js';
 import { Middleware } from './Middleware.js';
 
@@ -60,13 +61,12 @@ async function handleAction<State>(
   }
 
   if (action.stopPropagation) {
-    action.executionCompleted?.();
+    actionPromises.resolveAll(action);
     return;
   }
 
   await dispatchNextActions(middlewareAPI, action);
-
-  action.executionCompleted?.();
+  actionPromises.resolveAll(action);
 }
 
 export type { ControllerMiddlewareOptions };

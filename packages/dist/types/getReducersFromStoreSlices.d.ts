@@ -1,5 +1,5 @@
-import { Reducer } from 'redux';
-import { Constructor } from './types/index.js';
+import type { Reducer } from 'redux';
+import type { Constructor } from './types/index.js';
 /**
  * @example
  * \@storeSlice

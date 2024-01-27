@@ -1,5 +1,5 @@
-import { MiddlewareAPI } from 'redux';
-import { createAction } from '../actions/index.js';
+import type { MiddlewareAPI } from 'redux';
+import { chainActions, createAction, stopAction } from '../actions/index.js';
 import { actionToControllerMap } from '../constants.js';
 import { ControllerBase } from '../ControllerBase.js';
 import { makeActionType } from '../decorators/makeActionType.js';
@@ -166,14 +166,12 @@ describe('2 simple actions', () => {
 
 describe('3 consistent actions', () => {
   function prepareAction() {
-    const action = createAction(ACTIONS.actionA1);
-    action.addNextActions(
+    return chainActions(
       //
+      createAction(ACTIONS.actionA1),
       createAction(ACTIONS.actionA2),
       () => createAction(ACTIONS.actionB1)
     );
-
-    return action;
   }
 
   test('if "next" was called one time', async () => {
@@ -210,20 +208,21 @@ describe('3 consistent actions', () => {
 
 describe('5 consistent actions with promises and stop propagation', () => {
   function prepareAction() {
-    const action = createAction(ACTIONS.actionA1);
-
-    const bAction = createAction(ACTIONS.actionB1);
-    bAction.stop();
-    bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
-
-    action.addNextActions(
+    const bAction = chainActions(
       //
+      createAction(ACTIONS.actionB1),
+      createAction(ACTIONS.actionB2),
+      createAction(ACTIONS.actionB3)
+    );
+    stopAction(bAction);
+
+    return chainActions(
+      //
+      createAction(ACTIONS.actionA1),
       createAction(ACTIONS.actionA2),
       bAction,
       () => createAction(ACTIONS.actionA3)
     );
-
-    return action;
   }
 
   test('if "next" was called one time', async () => {
@@ -254,18 +253,20 @@ describe('5 consistent actions with promises and stop propagation', () => {
 
 describe('many actions with nesting', () => {
   function prepareAction() {
-    const action = createAction(ACTIONS.actionA1);
-    const bAction = createAction(ACTIONS.actionB1);
-    bAction.addNextActions(createAction(ACTIONS.actionB2), createAction(ACTIONS.actionB3));
-
-    action.addNextActions(
+    const bAction = chainActions(
       //
+      createAction(ACTIONS.actionB1),
+      createAction(ACTIONS.actionB2),
+      createAction(ACTIONS.actionB3)
+    );
+
+    return chainActions(
+      //
+      createAction(ACTIONS.actionA1),
       createAction(ACTIONS.actionA2),
       bAction,
       () => createAction(ACTIONS.actionA3)
     );
-
-    return action;
   }
 
   test('if "next" was called three times', async () => {
@@ -293,10 +294,8 @@ describe('many actions with nesting', () => {
 
 describe('many actions with callbacks', () => {
   function prepareAction(calledMethods: string[]) {
-    const action = createAction(ACTIONS.actionA1);
-
-    action.addNextActions(
-      //
+    return chainActions(
+      createAction(ACTIONS.actionA1),
       createAction(ACTIONS.actionA2),
       jest.fn(() => {
         calledMethods.push('mock fn 1');
@@ -313,8 +312,6 @@ describe('many actions with callbacks', () => {
         calledMethods.push('mock fn 2');
       })
     );
-
-    return action;
   }
 
   test('if "next" was called three times', async () => {

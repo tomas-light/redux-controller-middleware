@@ -26,7 +26,6 @@ __exportStar(require("./ControllerConstructor.js"), exports);
 __exportStar(require("./ControllerMethodNames.js"), exports);
 __exportStar(require("./ControllerWithCustomActionTypes.js"), exports);
 __exportStar(require("./InferState.js"), exports);
-__exportStar(require("./isAction.js"), exports);
 __exportStar(require("./IsString.js"), exports);
 __exportStar(require("./StaticActionsCreator.js"), exports);
 __exportStar(require("./WatchedController.js"), exports);

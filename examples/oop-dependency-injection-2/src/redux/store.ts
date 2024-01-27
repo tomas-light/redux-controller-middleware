@@ -11,9 +11,7 @@ const makeReducers = () =>
 export const store = configureStore({
   reducer: combineReducers(makeReducers()),
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false, // disables warnings on chaining functions in Action
-    }).concat(
+    getDefaultMiddleware().concat(
       controllerMiddleware({
         container,
       })

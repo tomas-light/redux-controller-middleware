@@ -10,10 +10,7 @@ const makeReducers = () =>
 export const store = configureStore({
   reducer: combineReducers(makeReducers()),
   // add redux-controller-middleware to redux
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false, // disables warnings on chaining functions in Action
-    }).concat(controllerMiddleware()),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(controllerMiddleware()),
 });
 
 export type RootState = InferState<ReturnType<typeof makeReducers>>;

@@ -1,6 +1,6 @@
 # Changelog
 
-Changes after v1.4.0 are displayed on [GitHub Releases page](https://github.com/tomas-light/redux-controller-middleware/releases)
+## Changes after v1.4.0 are displayed on [GitHub Releases page](https://github.com/tomas-light/redux-controller-middleware/releases)
 
 ### 1.4.0
 

@@ -16,15 +16,11 @@ export function configureReduxStore() {
   const rootReducer = combineReducers(makeReducers());
 
   const middleware = controllerMiddleware<State>({
-    getContainer: () => container,
+    container,
   });
 
   return configureStore({
     reducer: rootReducer,
-    middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({
-        thunk: false,
-        serializableCheck: false,
-      }).concat(middleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(middleware),
   });
 }

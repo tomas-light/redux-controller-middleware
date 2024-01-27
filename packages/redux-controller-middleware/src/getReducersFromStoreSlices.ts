@@ -1,6 +1,6 @@
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 import { isDecoratedStoreSlice } from './decorators/index.js';
-import { Constructor } from './types/index.js';
+import type { Constructor } from './types/index.js';
 
 /**
  * @example

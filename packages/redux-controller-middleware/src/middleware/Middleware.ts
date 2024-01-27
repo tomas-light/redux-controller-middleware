@@ -1,5 +1,5 @@
-import { Dispatch, MiddlewareAPI } from 'redux';
-import { Action } from '../types/Action.js';
+import type { Dispatch, MiddlewareAPI } from 'redux';
+import type { Action } from '../types/Action.js';
 
 /**
  * this class is needed to be able to resolve redux middleware via DI,

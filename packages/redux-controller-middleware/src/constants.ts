@@ -1,4 +1,4 @@
-import { ActionReducerOrControllerMethod } from './types/index.js';
+import type { ActionReducerOrControllerMethod } from './types/index.js';
 
 export const actionToControllerMap = new Map<
   string, // action type

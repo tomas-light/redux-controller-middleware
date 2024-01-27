@@ -1,6 +1,6 @@
-import { Container } from 'cheap-di';
-import { Action, ActionFactory, ActionMaybeWithContainer } from '../types/index.js';
-import { Writable } from '../types/Writable.js';
+import type { Container } from 'cheap-di';
+import type { Action, ActionFactory, ActionMaybeWithContainer } from '../types/index.js';
+import type { Writable } from '../types/Writable.js';
 
 export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<Payload> {
   type: any;
@@ -26,10 +26,6 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
     return appAction as Action<Payload>;
   }
 
-  static stop<Payload>(appAction: Action<Payload> | AppAction<Payload>): void {
-    (appAction as Writable<typeof appAction>).stopPropagation = true;
-  }
-
   static getActions<Payload>(appAction: Action<Payload> | AppAction<Payload>): Action['actions'] {
     if (!Array.isArray(appAction.actions)) {
       return [];
@@ -38,45 +34,9 @@ export class AppAction<Payload = undefined> implements ActionMaybeWithContainer<
     return appAction.actions;
   }
 
-  addNextActions(...actions: (ActionFactory | Action<unknown>)[]) {
-    AppAction.addNextActions(this, ...actions);
-    return this as unknown as Action<Payload>;
-  }
-
-  stop(): void {
-    AppAction.stop(this);
-  }
-
   toPlainObject(): Action<Payload> {
-    const keys = Object.keys(this) as (keyof AppAction<Payload>)[];
-    const plainObject = {} as Action<Payload>;
-
-    keys.forEach((key) => {
-      // skip property
-      if (key === 'toPlainObject') {
-        return;
-      }
-      if (key === 'actions') {
-        plainObject[key as any] = this[key];
-        return;
-      }
-      if (key === 'stopPropagation') {
-        plainObject[key as any] = this[key];
-        return;
-      }
-      plainObject[key] = this[key];
-    });
-
-    plainObject.addNextActions = function (...actions: (ActionFactory | Action<unknown>)[]) {
-      return AppAction.addNextActions(this, ...actions);
-    };
-    plainObject.stop = function () {
-      AppAction.stop(this);
-    };
-    plainObject.getActions = function () {
-      return AppAction.getActions(this);
-    };
-
+    const plainObject = Object.assign({}, this) as Action<Payload>;
+    delete plainObject.toPlainObject;
     return plainObject;
   }
 }

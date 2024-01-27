@@ -1,5 +1,5 @@
-import { Container } from 'cheap-di';
-import { Dispatch, Middleware as ReduxMiddleware } from 'redux';
+import { type Container } from 'cheap-di';
+import type { Dispatch, Middleware as ReduxMiddleware } from 'redux';
 type ControllerMiddlewareOptions = {
     container?: Container | (() => Container);
 };

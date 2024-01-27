@@ -93,11 +93,15 @@ export const addUser = createReducer<{ name: string }, { users: UsersSlice }>(
 
 ```tsx
 // your component
+import { faker } from '@faker-js/faker';
+import { useDispatch } from 'react-redux';
+import { addUser } from './addUser.ts';
+import { useAppSelector } from './store.ts';
+
 const Users = () => {
   const dispatch = useDispatch();
 
   const { usersList } = useAppSelector((state) => state.users);
-  const [userNumber, setUserNumber] = useState(0);
 
   return (
     <div>
@@ -109,8 +113,7 @@ const Users = () => {
 
       <button
         onClick={() => {
-          setUserNumber((prev) => prev + 1);
-          dispatch(addUser({ name: `new-user-${userNumber + 1}` }));
+          dispatch(addUser({ name: faker.person.fullName() }));
         }}
       >
         add user
@@ -124,6 +127,7 @@ const Users = () => {
 // store.ts
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { controllerMiddleware, getReducersFromStoreSlices, InferState } from 'redux-controller-middleware';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 import { UsersSlice } from './addUser.ts';
 
 // add user slice reducer
@@ -136,12 +140,11 @@ export const store = configureStore({
   reducer: combineReducers(makeReducers()),
   // add redux-controller-middleware to redux
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false, // disables warnings on chaining functions in Action
-    }).concat(controllerMiddleware()),
+    getDefaultMiddleware().concat(controllerMiddleware()),
 });
 
 export type RootState = InferState<ReturnType<typeof makeReducers>>;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 ```
 
 
@@ -216,7 +219,10 @@ const Users = () => {
 
       <button
         onClick={() => {
-          dispatch(UsersController.addUser({ name: `new-user-${userNumber + 1}` }));
+          dispatch(
+            // action creator looks like static method of the controller class
+            UsersController.addUser({ name: faker.person.fullName() })
+          );
         }}
       >
         add user
@@ -237,11 +243,11 @@ import { container } from 'cheap-di';
 import { controllerMiddleware } from 'redux-controller-middleware';
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {...},
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       controllerMiddleware({
-        container,
+        container, // DI container attached to middleware
       })
     ),
 });
@@ -257,13 +263,13 @@ export class Logger {
 }
 
 export class UserApi {
-	constructor(private logger: Logger) {}
-
-	async get() {
-		this.logger.log('[my api] fetching users list');
-		const response = await fetch('/api/user');
-		return response.json();
-	}
+  constructor(private logger: Logger) {}
+  
+  async get() {
+    this.logger.log('[my api] fetching users list');
+    const response = await fetch('/api/user');
+    return response.json();
+  }
 }
 // services.ts
 ```
@@ -364,12 +370,12 @@ class UsersController extends ControllerBase<UsersSlice> {
   async fetchUsers() {
     const users = await this.userApi.get();
 
-		// you also may wait untill the update will be applied to the redux state, if you need it
+    // you also may wait untill the update will be applied to the redux state, if you need it
     await this.updateStoreSlice({
       usersList: users,
     });
 
-    console.log('executed');
+    console.log('store has updated');
 
     const { usersList } = this.getState().users;
     console.log(`list is updated ${usersList === users}`); // true
@@ -406,12 +412,6 @@ const Page = () => {
   useEffect(() => {
     const action = chainActions(
       UserController.loadProfile({ userID: '123' }),
-      UserController.openUserPage({ userID: '123' }),
-      // ... any other
-    );
-    // same as
-    const action = UserController.loadProfile({ userID: '123' });
-    action.addNextActions(
       UserController.openUserPage({ userID: '123' }),
       // ... any other
     );

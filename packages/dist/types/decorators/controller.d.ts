@@ -1,4 +1,4 @@
-import { Controller, ControllerConstructor } from '../types/index.js';
+import type { Controller, ControllerConstructor } from '../types/index.js';
 export interface Class_ReduxControllerDecorator {
     <TController extends Controller, TConstructor extends ControllerConstructor<TController>>(constructor: TConstructor, context: ClassDecoratorContext): TConstructor;
     <TController extends Controller, TConstructor extends ControllerConstructor<TController>>(constructor: TConstructor): TConstructor;

@@ -1,5 +1,6 @@
-import { Reducer, UnknownAction } from 'redux';
-import { Action } from './types/index.js';
+import type { Reducer, UnknownAction } from 'redux';
+import { actionPromises } from './actionPromises.js';
+import type { Action } from './types/index.js';
 
 export function createStoreSliceReducer<StoreSlice>(initialStore: StoreSlice, updateActionType: UnknownAction['type']) {
   const storeSliceReducer: Reducer<StoreSlice, Action<Partial<StoreSlice>>> = (store = initialStore, action) => {
@@ -7,13 +8,10 @@ export function createStoreSliceReducer<StoreSlice>(initialStore: StoreSlice, up
       return store;
     }
 
-    const { executionCompleted } = action;
-    if (executionCompleted) {
-      // timer because we can't predict, when redux applies changes
-      setTimeout(() => {
-        executionCompleted!();
-      });
-    }
+    // timer because we can't predict, when redux applies changes
+    setTimeout(() => {
+      actionPromises.resolveAll(action);
+    });
 
     if (typeof action.payload === 'object') {
       return {

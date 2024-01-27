@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.controllerMiddleware = void 0;
+const actionPromises_js_1 = require("../actionPromises.js");
 const constants_js_1 = require("../constants.js");
 const dispatchNextActions_js_1 = require("../decorators/dispatchNextActions.js");
 const index_js_1 = require("../types/index.js");
@@ -45,10 +46,10 @@ async function handleAction(params) {
         });
     }
     if (action.stopPropagation) {
-        action.executionCompleted?.();
+        actionPromises_js_1.actionPromises.resolveAll(action);
         return;
     }
     await (0, dispatchNextActions_js_1.dispatchNextActions)(middlewareAPI, action);
-    action.executionCompleted?.();
+    actionPromises_js_1.actionPromises.resolveAll(action);
 }
 //# sourceMappingURL=controllerMiddleware.js.map

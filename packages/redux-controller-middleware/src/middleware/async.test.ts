@@ -1,6 +1,7 @@
+import { chainActions } from '../actions/index.js';
 import { ControllerBase } from '../ControllerBase.js';
 import { controller, reducer } from '../decorators/index.js';
-import { WatchedController } from '../types/index.js';
+import type { WatchedController } from '../types/index.js';
 import { controllerMiddleware } from './controllerMiddleware.js';
 
 test('if callback actions will be dispatched only after main action is ended one by one', async () => {
@@ -67,8 +68,7 @@ test('if callback actions will be dispatched only after main action is ended one
     },
   })(next);
 
-  const action = controller1.init();
-  action.addNextActions(controller2.init());
+  const action = chainActions(controller1.init(), controller2.init());
 
   await handleAction(action);
   expect(callStack).toEqual([

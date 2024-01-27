@@ -10,6 +10,7 @@ import { UserApi } from './services.ts';
 
 @storeSlice
 export class UsersSlice {
+  usersAreLoading = false;
   usersList: string[] = [];
 }
 
@@ -24,10 +25,15 @@ class UsersController extends ControllerBase<UsersSlice> {
 
   @reducer
   async fetchUsers() {
+    this.updateStoreSlice({
+      usersAreLoading: true,
+    });
+
     const users = await this.userApi.get();
 
     this.updateStoreSlice({
       usersList: users,
+      usersAreLoading: false,
     });
   }
 }

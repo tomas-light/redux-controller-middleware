@@ -9,7 +9,8 @@ var ControllerBase_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ControllerBase = void 0;
 const cheap_di_1 = require("cheap-di");
-const index_js_1 = require("./middleware/index.js");
+const index_js_1 = require("./actions/index.js");
+const index_js_2 = require("./middleware/index.js");
 const updateStoreSlice_js_1 = require("./updateStoreSlice.js");
 let ControllerBase = ControllerBase_1 = class ControllerBase {
     storeSlice;
@@ -49,15 +50,11 @@ let ControllerBase = ControllerBase_1 = class ControllerBase {
         if (!storeSlice) {
             throw new Error('You have to pass storeSlice to ControllerBase\'s "super" to use "this.updateStoreSlice" method');
         }
-        await new Promise((resolve) => {
-            const action = (0, updateStoreSlice_js_1.updateStoreSlice)(storeSlice)(partialStore);
-            action.executionCompleted = resolve;
-            this.dispatch(action);
-        });
+        await (0, index_js_1.waitAction)((0, updateStoreSlice_js_1.updateStoreSlice)(storeSlice)(partialStore), this.dispatch);
     }
 };
 exports.ControllerBase = ControllerBase;
 exports.ControllerBase = ControllerBase = ControllerBase_1 = __decorate([
-    (0, cheap_di_1.inject)(index_js_1.Middleware)
+    (0, cheap_di_1.inject)(index_js_2.Middleware)
 ], ControllerBase);
 //# sourceMappingURL=ControllerBase.js.map

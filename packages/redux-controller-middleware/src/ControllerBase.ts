@@ -1,7 +1,8 @@
 import { inject } from 'cheap-di';
-import { Dispatch } from 'redux';
+import type { Dispatch } from 'redux';
+import { waitAction } from './actions/index.js';
 import { Middleware } from './middleware/index.js';
-import { Action, Constructor, Controller } from './types/index.js';
+import type { Action, Constructor, Controller } from './types/index.js';
 import { updateStoreSlice } from './updateStoreSlice.js';
 
 @inject(Middleware)
@@ -51,10 +52,6 @@ export class ControllerBase<StoreSliceInstance, State extends Record<string, unk
       throw new Error('You have to pass storeSlice to ControllerBase\'s "super" to use "this.updateStoreSlice" method');
     }
 
-    await new Promise<void>((resolve) => {
-      const action = updateStoreSlice(storeSlice)(partialStore);
-      action.executionCompleted = resolve;
-      this.dispatch(action);
-    });
+    await waitAction(updateStoreSlice(storeSlice)(partialStore), this.dispatch);
   }
 }

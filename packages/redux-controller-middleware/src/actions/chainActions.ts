@@ -1,4 +1,5 @@
-import { Action, ActionFactory, isAction } from '../types/index.js';
+import { type Action, type ActionFactory, isAction } from '../types/index.js';
+import { AppAction } from './AppAction.js';
 import { createAction } from './createAction.js';
 
 export const FIRST_ACTION_IN_CHAIN_TYPE = 'Action chain start';
@@ -15,11 +16,11 @@ export function chainActions(...actions: (ActionFactory | Action<unknown>)[]) {
 
   const [firstAction, ...restActions] = filteredActions;
   if (isAction(firstAction)) {
-    return firstAction.addNextActions(...restActions);
+    return AppAction.addNextActions(firstAction, ...restActions);
   }
 
   const action = createAction(FIRST_ACTION_IN_CHAIN_TYPE);
-  action.addNextActions(...filteredActions);
+  AppAction.addNextActions(action, ...filteredActions);
 
   return action;
 }

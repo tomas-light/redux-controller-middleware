@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { inject } from 'cheap-di';
 
 export class Logger {
@@ -12,6 +13,6 @@ export class UserApi {
 
   async get() {
     this.logger.log('[my api] fetching users list');
-    return ['user-1', 'user-2'];
+    return [faker.person.fullName(), faker.person.fullName()];
   }
 }
