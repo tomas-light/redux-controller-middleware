@@ -8,22 +8,23 @@
   },
   "dependencies": {
     "@faker-js/faker": "8.4.0",
-    "@reduxjs/toolkit": "^2.0.1",
-    "cheap-di": "4.0.1",
+    "@reduxjs/toolkit": "^2.1.0",
+    "cheap-di": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-redux": "^9.0.4",
-    "redux": "^5.0.0",
-    "redux-controller-middleware": "3.0.0"
+    "react-redux": "^9.1.0",
+    "redux": "^5.0.1",
+    "redux-controller-middleware": "3.1.0-dev.1"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^11.1.5",
-    "@types/react": "^18.2.45",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "cheap-di-ts-transform": "^1.0.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.12",
+    "vitest": "1.2.2"
   }
 }

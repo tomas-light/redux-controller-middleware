@@ -1,4 +1,4 @@
-import type { Action } from './types/index.js';
+import type { UnknownAction } from 'redux';
 
 export const actionPromises = {
   map: new Map<
@@ -6,7 +6,7 @@ export const actionPromises = {
     Array<() => void> // promise resolvers, that should be resolved after action is processed
   >(),
 
-  add: (action: Action<unknown>) => {
+  add: (action: UnknownAction) => {
     let resolvers = actionPromises.map.get(action.type);
     if (!resolvers) {
       resolvers = [];
@@ -18,7 +18,7 @@ export const actionPromises = {
     });
   },
 
-  resolveAll: (action: Action<unknown>) => {
+  resolveAll: (action: UnknownAction) => {
     const resolvers = actionPromises.map.get(action.type);
     resolvers?.forEach((resolvePromise) => {
       resolvePromise();

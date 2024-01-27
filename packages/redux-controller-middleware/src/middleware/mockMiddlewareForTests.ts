@@ -89,6 +89,7 @@ export function mockMiddlewareForTests<StoreSlices extends Record<string, Constr
         Object.assign(storeSlice, action.payload);
       }
 
+      actionPromises.resolveAll(action);
       return action;
     },
     getState: () => state,

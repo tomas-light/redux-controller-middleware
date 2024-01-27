@@ -18,7 +18,7 @@ let ControllerBase = ControllerBase_1 = class ControllerBase {
         if (new.target === ControllerBase_1) {
             throw new Error('Cannot construct ControllerBase instance directly');
         }
-        this.dispatch = middleware?.dispatch;
+        this.dispatch = (...actions) => middleware?.dispatch(...actions);
         this.getState = () => middleware?.getState();
     }
     /**

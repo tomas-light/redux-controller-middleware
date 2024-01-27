@@ -32,6 +32,7 @@ export function mockMiddlewareForTests(storeConfig = {}) {
             if (storeSlice && action.payload != null) {
                 Object.assign(storeSlice, action.payload);
             }
+            actionPromises.resolveAll(action);
             return action;
         },
         getState: () => state,

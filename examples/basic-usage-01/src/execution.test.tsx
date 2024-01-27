@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { render, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import { Provider, TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { chainActions } from 'redux-controller-middleware';
 import { configureReduxStore, State } from './configureReduxStore.js';
 import { UserController } from './redux/User.controller.js';
 
@@ -14,9 +15,13 @@ describe('chained actions', () => {
     const { usersAreLoading, openedUser } = (useSelector as TypedUseSelectorHook<State>)((state) => state.users);
 
     useEffect(() => {
-      const action = UserController.loadUsers();
-      action.addNextActions(UserController.openUserById({ userId }));
-      dispatch(action);
+      dispatch(
+        chainActions(
+          //
+          UserController.loadUsers(),
+          UserController.openUserById({ userId })
+        )
+      );
     }, []);
 
     if (usersAreLoading) {

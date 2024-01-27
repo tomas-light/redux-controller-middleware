@@ -20,7 +20,7 @@ export class ControllerBase<StoreSliceInstance, State extends Record<string, unk
       throw new Error('Cannot construct ControllerBase instance directly');
     }
 
-    this.dispatch = middleware?.dispatch;
+    this.dispatch = (...actions) => middleware?.dispatch(...actions);
     this.getState = () => middleware?.getState();
   }
 
