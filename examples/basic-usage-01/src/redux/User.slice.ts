@@ -1,4 +1,4 @@
-import { storeSlice } from '@redux-controller-middleware/src';
+import { storeSlice } from 'redux-controller-middleware';
 import { User } from '../types/User.js';
 
 @storeSlice

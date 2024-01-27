@@ -5,7 +5,7 @@ import {
   controller,
   reducer,
   WatchedController,
-} from '@redux-controller-middleware/src';
+} from 'redux-controller-middleware';
 import { UserApi } from '../api/UserApi.js';
 import { State } from '../configureReduxStore.js';
 import { User } from '../types/User.js';

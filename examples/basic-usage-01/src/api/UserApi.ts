@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { User } from '../types/User.js';
 
 export class UserApi {
@@ -7,12 +8,12 @@ export class UserApi {
       ok: true,
       data: [
         {
-          userId: 1,
-          name: 'Robert',
+          userId: faker.number.int(),
+          name: faker.person.fullName(),
         },
         {
-          userId: 2,
-          name: 'Elizabeth',
+          userId: faker.number.int(),
+          name: faker.person.fullName(),
         },
       ] satisfies User[],
     };

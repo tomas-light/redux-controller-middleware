@@ -47,7 +47,6 @@ describe('[class] UserController', () => {
       const { dispatchedActions } = await dispatchFetchUsersAction();
 
       const lastAction = dispatchedActions.at(-1) as DispatchedAction<Partial<UsersSlice>> | undefined;
-      const updateActionType = getStoreSliceUpdateActionType(UsersSlice);
 
       expect(lastAction?.type).toBe(updateActionType);
       expect(lastAction?.payload.usersAreLoading).toBe(false);
@@ -57,7 +56,6 @@ describe('[class] UserController', () => {
       const { dispatchedActions, state } = await dispatchFetchUsersAction();
 
       const lastAction = dispatchedActions.at(-1) as DispatchedAction<Partial<UsersSlice>> | undefined;
-      const updateActionType = getStoreSliceUpdateActionType(UsersSlice);
 
       expect(lastAction?.type).toBe(updateActionType);
       expect(lastAction?.payload.usersList).toBe(fakeUserList);
