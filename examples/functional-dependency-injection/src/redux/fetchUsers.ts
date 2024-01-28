@@ -3,20 +3,24 @@ import { UserApi } from './services.ts';
 
 @storeSlice
 export class UsersSlice {
+  usersAreLoading = false;
   usersList: string[] = [];
 }
 
 export const fetchUsers = createReducer('fetchUsers', async ({ container, dispatch }) => {
-  const userApi = container?.resolve(UserApi);
-  if (!userApi) {
-    return;
-  }
+  dispatch(
+    updateStoreSlice(UsersSlice)({
+      usersAreLoading: true,
+    })
+  );
 
-  const users = await userApi.get();
+  const userApi = container?.resolve(UserApi);
+  const users = (await userApi?.get()) ?? [];
 
   dispatch(
     updateStoreSlice(UsersSlice)({
       usersList: users,
+      usersAreLoading: false,
     })
   );
 });

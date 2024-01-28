@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { createReducer, storeSlice, updateStoreSlice } from 'redux-controller-middleware';
 
 export type User = {
@@ -14,7 +15,7 @@ export const addUser = createReducer<{ name: string }, { users: UsersSlice }>(
   'addUser',
   async ({ action, dispatch, getState }) => {
     const newUser = await Promise.resolve().then(() => ({
-      userId: new Date().valueOf().toString(),
+      userId: faker.string.uuid(),
       userName: action.payload.name,
     }));
 

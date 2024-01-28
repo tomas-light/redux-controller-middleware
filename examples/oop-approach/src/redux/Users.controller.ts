@@ -1,10 +1,11 @@
+import { faker } from '@faker-js/faker';
 import {
+  Action,
+  controller,
   ControllerBase,
   Middleware,
-  storeSlice,
-  controller,
   reducer,
-  Action,
+  storeSlice,
   WatchedController,
 } from 'redux-controller-middleware';
 
@@ -27,7 +28,7 @@ class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> 
   @reducer
   async addUser(action: Action<{ name: string }>) {
     const newUser = await Promise.resolve().then(() => ({
-      userId: new Date().valueOf().toString(),
+      userId: faker.string.uuid(),
       userName: action.payload.name,
     }));
 

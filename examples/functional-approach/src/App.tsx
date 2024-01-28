@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useDispatch, Provider } from 'react-redux';
-import { store } from './redux/store.ts';
+import { faker } from '@faker-js/faker';
+import { Provider, useDispatch } from 'react-redux';
 import { addUser } from './redux/addUser.ts';
+import { store } from './redux/store.ts';
 import { useAppSelector } from './redux/useAppSelector.ts';
 
 export default function App() {
@@ -16,7 +16,6 @@ const Page = () => {
   const dispatch = useDispatch();
 
   const { usersList } = useAppSelector((state) => state.users);
-  const [userNumber, setUserNumber] = useState(0);
 
   return (
     <div>
@@ -28,8 +27,7 @@ const Page = () => {
 
       <button
         onClick={() => {
-          setUserNumber((prev) => prev + 1);
-          dispatch(addUser({ name: `new-user-${userNumber + 1}` }));
+          dispatch(addUser({ name: faker.person.fullName() }));
         }}
       >
         add user

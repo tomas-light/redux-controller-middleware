@@ -1,15 +1,13 @@
+import { actionPromises } from './actionPromises.js';
 export function createStoreSliceReducer(initialStore, updateActionType) {
     const storeSliceReducer = (store = initialStore, action) => {
         if (action.type !== updateActionType) {
             return store;
         }
-        const { executionCompleted } = action;
-        if (executionCompleted) {
-            // timer because we can't predict, when redux applies changes
-            setTimeout(() => {
-                executionCompleted();
-            });
-        }
+        // timer because we can't predict, when redux applies changes
+        setTimeout(() => {
+            actionPromises.resolveAll(action);
+        });
         if (typeof action.payload === 'object') {
             return {
                 ...store,

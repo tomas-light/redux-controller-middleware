@@ -1,4 +1,4 @@
-import { Action } from '../types/index.js';
+import type { Action } from '../types/index.js';
 export interface ReducerMethodDecorator {
     <This, TPayload, Args extends Action<TPayload>[], Return>(method: (this: This, ...args: Args) => Return, methodContext: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Return>): (this: This, ...args: Args) => Return;
     <This, TPayload, Args extends Action<TPayload>[], Return>(method: (this: This, ...args: Args) => Return, methodName: string, descriptor: PropertyDescriptor): void;

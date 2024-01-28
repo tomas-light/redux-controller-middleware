@@ -1,7 +1,7 @@
 import { createAction } from '../actions/createAction.js';
 import { actionToControllerMap, methodNamesTemporaryBox } from '../constants.js';
-import { Constructor, Controller, ControllerConstructor } from '../types/index.js';
-import { makeActionType } from './makeActionType.js';
+import type { Constructor, Controller, ControllerConstructor } from '../types/index.js';
+import { makeActionType } from '../actions/makeActionType.js';
 
 export interface Class_ReduxControllerDecorator {
   // stage 3 decorator

@@ -1,5 +1,5 @@
-import { DependencyResolver } from 'cheap-di';
-import { Action, isActionWithContainer } from './types/index.js';
+import type { DependencyResolver } from 'cheap-di';
+import { type Action, isActionWithContainer } from './types/index.js';
 
 export function tryToFindDependencyContainer<Payload = undefined>(
   action: Action<Payload>,

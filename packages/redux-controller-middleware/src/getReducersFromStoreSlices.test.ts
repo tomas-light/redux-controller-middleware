@@ -1,4 +1,4 @@
-import { DecoratedStoreSlice, storeSlice } from './decorators/index.js';
+import { type DecoratedStoreSlice, storeSlice } from './decorators/index.js';
 import { getReducersFromStoreSlices } from './getReducersFromStoreSlices.js';
 
 describe('[function] getReducersFromStoreSlices', () => {

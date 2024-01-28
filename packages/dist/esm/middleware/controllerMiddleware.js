@@ -1,5 +1,6 @@
+import { actionPromises } from '../actionPromises.js';
 import { actionToControllerMap } from '../constants.js';
-import { dispatchNextActions } from '../decorators/dispatchNextActions.js';
+import { dispatchNextActions } from '../actions/dispatchNextActions.js';
 import { isAction } from '../types/index.js';
 import { callActionReducer } from './callActionReducer.js';
 import { Middleware } from './Middleware.js';
@@ -41,11 +42,11 @@ async function handleAction(params) {
         });
     }
     if (action.stopPropagation) {
-        action.executionCompleted?.();
+        actionPromises.resolveAll(action);
         return;
     }
     await dispatchNextActions(middlewareAPI, action);
-    action.executionCompleted?.();
+    actionPromises.resolveAll(action);
 }
 export { controllerMiddleware };
 //# sourceMappingURL=controllerMiddleware.js.map

@@ -1,7 +1,7 @@
-import { DependencyResolver } from 'cheap-di';
-import { MiddlewareAPI } from 'redux';
+import type { DependencyResolver } from 'cheap-di';
+import type { MiddlewareAPI } from 'redux';
 import { tryToFindDependencyContainer } from '../tryToFindDependencyContainer.js';
-import { Action, ActionReducerOrControllerMethod } from '../types/index.js';
+import type { Action, ActionReducerOrControllerMethod } from '../types/index.js';
 
 type Parameters<Payload = undefined, State = unknown> = {
   action: Action<Payload>;

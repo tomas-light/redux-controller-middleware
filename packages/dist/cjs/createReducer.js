@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createReducer = void 0;
 const index_js_1 = require("./actions/index.js");
 const constants_js_1 = require("./constants.js");
-const makeActionType_js_1 = require("./decorators/makeActionType.js");
+const makeActionType_js_1 = require("./actions/makeActionType.js");
 function createReducer(actionName, reducer) {
     const actionType = (0, makeActionType_js_1.makeActionType)({
         methodName: actionName,

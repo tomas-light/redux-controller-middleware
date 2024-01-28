@@ -1,5 +1,5 @@
-import { DiContextType } from 'cheap-di-react';
-import { Action as ReduxAction } from 'redux';
+import type { DiContextType } from 'cheap-di-react';
+import type { Action as ReduxAction } from 'redux';
 import { AppAction, createAction } from '../actions/index.js';
 
 function addContainerToAction(action: ReduxAction, diContext: DiContextType) {

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.dispatchNextActions = void 0;
+const actionPromises_js_1 = require("../actionPromises.js");
 const index_js_1 = require("../actions/index.js");
 const index_js_2 = require("../types/index.js");
 async function dispatchNextActions(middlewareAPI, action) {
@@ -27,10 +28,9 @@ async function dispatchNextActions(middlewareAPI, action) {
             // if it was just callback, no need additional processing
             continue;
         }
-        await new Promise((resolve) => {
-            nextAction.executionCompleted = resolve;
-            middlewareAPI.dispatch(nextAction);
-        });
+        const promise = actionPromises_js_1.actionPromises.add(nextAction);
+        middlewareAPI.dispatch(nextAction);
+        await promise;
         if (nextAction.stopPropagation) {
             break;
         }

@@ -1,4 +1,4 @@
-import { Action } from '../types/index.js';
+import type { Action } from '../types/index.js';
 import { chainActions, FALLBACK_ACTION_TYPE, FIRST_ACTION_IN_CHAIN_TYPE } from './chainActions.js';
 import { createAction } from './createAction.js';
 

@@ -6,6 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var ControllerBase_1;
 import { inject } from 'cheap-di';
+import { waitAction } from './actions/index.js';
 import { Middleware } from './middleware/index.js';
 import { updateStoreSlice } from './updateStoreSlice.js';
 let ControllerBase = ControllerBase_1 = class ControllerBase {
@@ -17,7 +18,7 @@ let ControllerBase = ControllerBase_1 = class ControllerBase {
         if (new.target === ControllerBase_1) {
             throw new Error('Cannot construct ControllerBase instance directly');
         }
-        this.dispatch = middleware?.dispatch;
+        this.dispatch = (...actions) => middleware?.dispatch(...actions);
         this.getState = () => middleware?.getState();
     }
     /**
@@ -46,11 +47,7 @@ let ControllerBase = ControllerBase_1 = class ControllerBase {
         if (!storeSlice) {
             throw new Error('You have to pass storeSlice to ControllerBase\'s "super" to use "this.updateStoreSlice" method');
         }
-        await new Promise((resolve) => {
-            const action = updateStoreSlice(storeSlice)(partialStore);
-            action.executionCompleted = resolve;
-            this.dispatch(action);
-        });
+        await waitAction(updateStoreSlice(storeSlice)(partialStore), this.dispatch);
     }
 };
 ControllerBase = ControllerBase_1 = __decorate([

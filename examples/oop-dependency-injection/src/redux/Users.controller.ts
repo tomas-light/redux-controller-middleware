@@ -1,3 +1,4 @@
+import { inject } from 'cheap-di';
 import {
   controller,
   ControllerBase,
@@ -10,11 +11,13 @@ import { UserApi } from './services.ts';
 
 @storeSlice
 export class UsersSlice {
+  usersAreLoading = false;
   usersList: string[] = [];
 }
 
+@inject(Middleware, UserApi)
 @controller
-class UsersController extends ControllerBase<UsersSlice> {
+class UsersController extends ControllerBase<UsersSlice, { users: UsersSlice }> {
   constructor(
     middleware: Middleware,
     private readonly userApi: UserApi
@@ -24,11 +27,19 @@ class UsersController extends ControllerBase<UsersSlice> {
 
   @reducer
   async fetchUsers() {
+    this.updateStoreSlice({
+      usersAreLoading: true,
+    });
+
     const users = await this.userApi.get();
 
-    this.updateStoreSlice({
+    await this.updateStoreSlice({
       usersList: users,
+      usersAreLoading: false,
     });
+
+    const { usersList } = this.getState().users;
+    console.log(`list is updated ${usersList === users}`); // true
   }
 }
 

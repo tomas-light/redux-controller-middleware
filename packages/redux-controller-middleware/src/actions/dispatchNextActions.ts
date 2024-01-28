@@ -1,6 +1,7 @@
-import { MiddlewareAPI } from 'redux';
-import { AppAction } from '../actions/index.js';
-import { Action, isAction } from '../types/index.js';
+import type { MiddlewareAPI } from 'redux';
+import { actionPromises } from '../actionPromises.js';
+import { AppAction } from './index.js';
+import { type Action, isAction } from '../types/index.js';
 
 export async function dispatchNextActions(middlewareAPI: MiddlewareAPI, action: Action<unknown>) {
   const nextActions = [...AppAction.getActions(action)];
@@ -28,10 +29,9 @@ export async function dispatchNextActions(middlewareAPI: MiddlewareAPI, action: 
       continue;
     }
 
-    await new Promise<void>((resolve) => {
-      (nextAction as Action).executionCompleted = resolve;
-      middlewareAPI.dispatch(nextAction as Action);
-    });
+    const promise = actionPromises.add(nextAction);
+    middlewareAPI.dispatch(nextAction);
+    await promise;
 
     if (nextAction.stopPropagation) {
       break;

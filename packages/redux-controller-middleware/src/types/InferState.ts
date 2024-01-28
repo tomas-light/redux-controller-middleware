@@ -1,4 +1,4 @@
-import { Reducer } from 'redux';
+import type { Reducer } from 'redux';
 
 export type InferState<Reducers extends Record<string, Reducer>> = {
   [storeName in keyof Reducers as Reducers[storeName] extends Reducer

@@ -10,7 +10,6 @@ export * from './ControllerConstructor.js';
 export * from './ControllerMethodNames.js';
 export * from './ControllerWithCustomActionTypes.js';
 export * from './InferState.js';
-export * from './isAction.js';
 export * from './IsString.js';
 export * from './StaticActionsCreator.js';
 export * from './WatchedController.js';

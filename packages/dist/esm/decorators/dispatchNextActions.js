@@ -1,3 +1,4 @@
+import { actionPromises } from '../actionPromises.js';
 import { AppAction } from '../actions/index.js';
 import { isAction } from '../types/index.js';
 export async function dispatchNextActions(middlewareAPI, action) {
@@ -24,10 +25,9 @@ export async function dispatchNextActions(middlewareAPI, action) {
             // if it was just callback, no need additional processing
             continue;
         }
-        await new Promise((resolve) => {
-            nextAction.executionCompleted = resolve;
-            middlewareAPI.dispatch(nextAction);
-        });
+        const promise = actionPromises.add(nextAction);
+        middlewareAPI.dispatch(nextAction);
+        await promise;
         if (nextAction.stopPropagation) {
             break;
         }

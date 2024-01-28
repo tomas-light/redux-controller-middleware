@@ -1,4 +1,5 @@
 import { storeSlice } from './decorators/index.js';
+import { makeActionType } from './actions/makeActionType.js';
 import { updateStoreSlice } from './updateStoreSlice.js';
 
 describe('[function] updateStoreSlice', () => {
@@ -12,7 +13,12 @@ describe('[function] updateStoreSlice', () => {
     myStore.foo = 'aa';
 
     const action = updateStoreSlice(MyStore)({ foo: '' });
-    expect(action.type).toBe('My_update_store');
+    expect(action.type).toBe(
+      makeActionType({
+        controllerName: 'My',
+        methodName: 'updateStore',
+      })
+    );
     expect(action.payload).toEqual({ foo: '' });
   });
 });
