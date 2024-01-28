@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker';
 import {
   type DispatchedAction,
   getStoreSliceUpdateActionType,
+  makeActionType,
   mockMiddlewareForTests,
 } from 'redux-controller-middleware';
 import { UserApi } from '../api/UserApi.js';
@@ -90,7 +91,49 @@ describe('[class] UserController', () => {
 
       const [, , thirdAction] = dispatchedActions as DispatchedAction<{ error: string }>[];
 
+      const showErrorToastActionTypePart = makeActionType({
+        controllerName: 'User',
+        methodName: 'showErrorToast',
+      });
+
+      expect(thirdAction?.type.startsWith(showErrorToastActionTypePart)).toBe(true);
       expect(thirdAction?.payload.error).toBe('Oops! Something went wrong...');
+    });
+  });
+
+  describe('[method] openUserById', () => {
+    test('it sets user as opened user if user with passed ID is presented in users map', async () => {
+      const mockedMiddleware = mockMiddlewareForTests({ users: UserSlice });
+      const { dispatch, state } = mockedMiddleware;
+
+      const fakeUser: User = {
+        userId: faker.number.int(),
+        name: faker.person.fullName(),
+      };
+
+      state.users.users = new Map([[fakeUser.userId, fakeUser]]);
+
+      // dispatch action and wait until it will be resolved
+      await dispatch(UserController.openUserById({ userId: fakeUser.userId }));
+
+      expect(state.users.openedUser).toBe(fakeUser);
+    });
+  });
+
+  describe('[method] clearUser', () => {
+    test('it sets opened user to null', async () => {
+      const mockedMiddleware = mockMiddlewareForTests({ users: UserSlice });
+      const { dispatch, state } = mockedMiddleware;
+
+      state.users.openedUser = {
+        userId: faker.number.int(),
+        name: faker.person.fullName(),
+      };
+
+      // dispatch action and wait until it will be resolved
+      await dispatch(UserController.clearUser());
+
+      expect(state.users.openedUser).toBeNull();
     });
   });
 });
