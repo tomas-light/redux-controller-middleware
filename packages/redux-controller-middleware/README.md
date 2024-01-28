@@ -16,6 +16,7 @@ Adjust Redux middleware to be able to use controllers with Dependency Injection 
     * [OOP variant](#dependency-injection-oop)
   * [createAction](#createAction)
   * [Chaining actions](#chaining-action)
+  * [How about tests?](#tests)
 
 ## <a name="installation"></a> Installation
 npm
@@ -422,3 +423,100 @@ const Page = () => {
   return /* your layout */;
 };
 ```
+
+### <a name="tests"></a> How about tests?
+
+We prepare a few functions to simplify middleware and mocking in tests:
+
+`getStoreSliceUpdateActionType` - helps you to extract action type of a store slice update method:
+```ts
+import { getStoreSliceUpdateActionType, storeSlice } from 'redux-controller-middleware';
+
+@storeSlice
+export class UserSlice {
+  // ...
+}
+
+test('...', () => {
+  const someActionInYourTest = /* ... */;
+  
+  const updateActionType = getStoreSliceUpdateActionType(UserSlice);
+  expect(someActionInYourTest.type).toBe(updateActionType);
+});
+```
+
+`makeActionType` - helps you to create action type with passed parameters to compare an action type in your tests
+with expected value. All actions except store slice update action has unique salt in their action types
+(<i>that equals current milliseconds of time by default</i>). So you may check only if your action type is started with
+desired action type part.
+```ts
+import { createReducer, makeActionType, mockMiddlewareForTests } from 'redux-controller-middleware';
+
+const loadUsers = createReducer('loadUsers', () => {/*...*/});
+
+test('...', async () => {
+  const mockedMiddleware = mockMiddlewareForTests();
+  const { dispatch, dispatchedActions } = mockedMiddleware;
+  
+  await dispatch(loadUsers());
+	
+  const [firstAction] = dispatchedActions;
+
+  const actionTypePart = makeActionType({
+    methodName: 'loadUsers',
+  });
+  
+  expect(firstAction?.type.startsWith(actionTypePart)).toBe(true);
+});
+```
+```ts
+import { controller, makeActionType, mockMiddlewareForTests, reducer } from 'redux-controller-middleware';
+
+@controller
+class UserController extends ControllerBase {
+	// ...
+  @reducer
+  async loadUsers() {
+		// ...
+  }
+}
+
+test('...', async () => {
+  const mockedMiddleware = mockMiddlewareForTests();
+  const { dispatch, dispatchedActions } = mockedMiddleware;
+  
+  await dispatch(UserController.loadUsers());
+	
+  const [firstAction] = dispatchedActions;
+
+  const actionTypePart = makeActionType({
+    controllerName: 'UserController',
+    // same as 
+    // controllerName: 'User'
+    methodName: 'loadUsers',
+  });
+  
+  expect(firstAction?.type.startsWith(actionTypePart)).toBe(true);
+});
+```
+
+`mockMiddlewareForTests` - helps you mock middleware and state, dispatch actions and analyze the process.
+```ts
+test('it sets opened user to null', async () => {
+  const mockedMiddleware = mockMiddlewareForTests({ users: UserSlice });
+  const { dispatch, state } = mockedMiddleware;
+
+  state.users.openedUser = {
+    userId: faker.number.int(),
+    name: faker.person.fullName(),
+  };
+
+  // dispatch action and wait until it will be resolved
+  await dispatch(UserController.clearUser());
+
+  expect(state.users.openedUser).toBeNull();
+});
+```
+
+You can find more tests examples in
+<a href="https://github.com/tomas-light/redux-controller-middleware/blob/master/examples">GitHub examples</a>
