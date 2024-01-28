@@ -1,7 +1,7 @@
 import { Provider, useDispatch } from 'react-redux';
 import { store } from './redux/store.ts';
 import { useAppSelector } from './redux/useAppSelector.ts';
-import { UsersController } from './redux/UsersController.ts';
+import { UsersController } from './redux/Users.controller.ts';
 
 export default function App() {
   return (

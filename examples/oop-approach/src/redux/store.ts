@@ -1,6 +1,6 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { controllerMiddleware, getReducersFromStoreSlices, InferState } from 'redux-controller-middleware';
-import { UsersSlice } from './UsersController.ts';
+import { UsersSlice } from './Users.controller.ts';
 
 const makeReducers = () =>
   getReducersFromStoreSlices({

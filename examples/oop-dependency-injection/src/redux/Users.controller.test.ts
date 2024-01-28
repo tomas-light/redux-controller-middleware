@@ -6,7 +6,7 @@ import {
 } from 'redux-controller-middleware';
 import { describe, expect, test } from 'vitest';
 import { UserApi } from './services.ts';
-import { UsersController, UsersSlice } from './UsersController.ts';
+import { UsersController, UsersSlice } from './Users.controller.ts';
 
 describe('[class] UserController', () => {
   describe('[method] fetchUsers', () => {

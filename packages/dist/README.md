@@ -156,7 +156,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 > It allows you to use dependency injection technics and simplify tests.
 
 ```ts
-// UsersController.ts
+// Users.controller.ts
 import {
   ControllerBase,
   Middleware,
