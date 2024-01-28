@@ -1,6 +1,6 @@
 import type { MiddlewareAPI } from 'redux';
 import { actionPromises } from '../actionPromises.js';
-import { AppAction } from '../actions/index.js';
+import { AppAction } from './index.js';
 import { type Action, isAction } from '../types/index.js';
 
 export async function dispatchNextActions(middlewareAPI: MiddlewareAPI, action: Action<unknown>) {

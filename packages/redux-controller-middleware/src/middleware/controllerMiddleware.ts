@@ -2,7 +2,7 @@ import { type Container } from 'cheap-di';
 import type { Dispatch, Middleware as ReduxMiddleware, MiddlewareAPI } from 'redux';
 import { actionPromises } from '../actionPromises.js';
 import { actionToControllerMap } from '../constants.js';
-import { dispatchNextActions } from '../decorators/dispatchNextActions.js';
+import { dispatchNextActions } from '../actions/dispatchNextActions.js';
 import { type Action, isAction } from '../types/index.js';
 import { callActionReducer } from './callActionReducer.js';
 import { Middleware } from './Middleware.js';
