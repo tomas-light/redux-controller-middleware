@@ -2,7 +2,7 @@ import type { MiddlewareAPI } from 'redux';
 import { chainActions, createAction, stopAction } from '../actions/index.js';
 import { actionToControllerMap } from '../constants.js';
 import { ControllerBase } from '../ControllerBase.js';
-import { makeActionType } from '../decorators/makeActionType.js';
+import { makeActionType } from '../actions/makeActionType.js';
 import { isAction } from '../types/index.js';
 import { controllerMiddleware } from './controllerMiddleware.js';
 

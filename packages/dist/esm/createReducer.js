@@ -1,6 +1,6 @@
 import { createAction } from './actions/index.js';
 import { actionToControllerMap } from './constants.js';
-import { makeActionType } from './decorators/makeActionType.js';
+import { makeActionType } from './actions/makeActionType.js';
 export function createReducer(actionName, reducer) {
     const actionType = makeActionType({
         methodName: actionName,

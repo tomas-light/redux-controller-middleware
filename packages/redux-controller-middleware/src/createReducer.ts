@@ -1,6 +1,6 @@
 import { createAction } from './actions/index.js';
 import { actionToControllerMap } from './constants.js';
-import { makeActionType } from './decorators/makeActionType.js';
+import { makeActionType } from './actions/makeActionType.js';
 import type { Action, ActionReducerParameters } from './types/index.js';
 
 type InferActionFactory<Payload> = Payload extends undefined ? () => Action : (payload: Payload) => Action<Payload>;

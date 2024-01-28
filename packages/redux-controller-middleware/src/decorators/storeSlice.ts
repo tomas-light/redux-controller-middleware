@@ -1,7 +1,7 @@
 import type { Reducer } from 'redux';
 import { createStoreSliceReducer } from '../createStoreSliceReducer.js';
 import type { Action, Constructor } from '../types/index.js';
-import { makeActionType } from './makeActionType.js';
+import { makeActionType } from '../actions/makeActionType.js';
 
 export type DecoratedStoreSlice<
   StoreSlice,

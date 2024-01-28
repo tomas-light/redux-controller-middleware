@@ -1,5 +1,5 @@
 import { createStoreSliceReducer } from '../createStoreSliceReducer.js';
-import { makeActionType } from './makeActionType.js';
+import { makeActionType } from '../actions/makeActionType.js';
 export const storeSlice = ((constructor) => {
     const sanitizedClassName = constructor.name.replaceAll('StoreSlice', '').replaceAll('Store', '');
     const decoratedStoreSlice = constructor;

@@ -1,5 +1,5 @@
 import { storeSlice } from './decorators/index.js';
-import { makeActionType } from './decorators/makeActionType.js';
+import { makeActionType } from './actions/makeActionType.js';
 import { updateStoreSlice } from './updateStoreSlice.js';
 
 describe('[function] updateStoreSlice', () => {

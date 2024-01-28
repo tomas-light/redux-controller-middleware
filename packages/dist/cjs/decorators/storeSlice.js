@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getStoreSliceUpdateActionType = exports.isDecoratedStoreSlice = exports.storeSlice = void 0;
 const createStoreSliceReducer_js_1 = require("../createStoreSliceReducer.js");
-const makeActionType_js_1 = require("./makeActionType.js");
+const makeActionType_js_1 = require("../actions/makeActionType.js");
 exports.storeSlice = ((constructor) => {
     const sanitizedClassName = constructor.name.replaceAll('StoreSlice', '').replaceAll('Store', '');
     const decoratedStoreSlice = constructor;

@@ -1,6 +1,6 @@
 import { createAction } from '../actions/createAction.js';
 import { actionToControllerMap, methodNamesTemporaryBox } from '../constants.js';
-import { makeActionType } from './makeActionType.js';
+import { makeActionType } from '../actions/makeActionType.js';
 /**
  * It registers your controller in the middleware. You need to add `@actionHandler` decorator to some of your methods
  * */

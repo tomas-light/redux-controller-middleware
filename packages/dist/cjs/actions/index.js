@@ -17,6 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./AppAction.js"), exports);
 __exportStar(require("./chainActions.js"), exports);
 __exportStar(require("./createAction.js"), exports);
+__exportStar(require("./makeActionType.js"), exports);
 __exportStar(require("./stopAction.js"), exports);
 __exportStar(require("./waitAction.js"), exports);
 //# sourceMappingURL=index.js.map
