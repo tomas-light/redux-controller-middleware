@@ -12,7 +12,7 @@
     "react-dom": "^18.2.0",
     "react-redux": "^9.1.0",
     "redux": "^5.0.1",
-    "redux-controller-middleware": "3.1.0-dev.1"
+    "redux-controller-middleware": "workspace:^"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.3.0",
