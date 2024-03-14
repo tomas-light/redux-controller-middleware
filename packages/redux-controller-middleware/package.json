@@ -1,6 +1,6 @@
 {
-  "name": "@redux-controller-middleware/src",
-  "version": "3.1.0-dev.1",
+  "name": "redux-controller-middleware",
+  "version": "3.1.0-dev.2",
   "description": "Adjust Redux middleware to be able to use controllers with Dependency Injection to handle actions",
   "author": "tomas-light",
   "repository": "git@github.com/tomas-light/redux-controller-middleware.git",
@@ -58,7 +58,6 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "build-instructions": {
-    "name": "redux-controller-middleware",
     "files": [
       "cjs/**/*",
       "esm/**/*",
